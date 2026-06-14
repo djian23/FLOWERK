@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, X } from 'lucide-react'
+import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -16,27 +16,25 @@ const navItems = [
   { href: '/dashboard/search', label: 'Recherche', icon: Search },
 ]
 
-interface SidebarProps {
-  open?: boolean
-  onClose?: () => void
-}
-
-export function Sidebar({ open, onClose }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname()
 
-  const content = (
-    <aside className="h-full w-64 bg-[#0A0A0A] flex flex-col">
-      <div className="px-4 py-6 border-b border-white/10 flex flex-col items-center relative">
-        {onClose && (
-          <button onClick={onClose} className="absolute top-4 right-4 text-white/50 hover:text-white lg:hidden">
-            <X className="h-5 w-5" />
-          </button>
-        )}
+  return (
+    <aside className="fixed inset-y-0 left-0 w-14 lg:w-64 bg-[#0A0A0A] flex flex-col z-50 transition-all">
+      {/* Logo — hidden on mobile */}
+      <div className="hidden lg:flex px-4 py-6 border-b border-white/10 flex-col items-center">
         <Image src="/logo.jpeg" alt="Flower K" width={140} height={140} className="rounded-sm object-contain" priority />
         <p className="text-[#C4B8A8] text-xs tracking-[0.2em] mt-3 uppercase">Administration</p>
       </div>
 
-      <nav className="flex-1 py-6 px-3 overflow-y-auto">
+      {/* Mobile logo (icon only) */}
+      <div className="flex lg:hidden items-center justify-center py-4 border-b border-white/10">
+        <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+          <span className="text-white text-xs font-serif font-bold">K</span>
+        </div>
+      </div>
+
+      <nav className="flex-1 py-4 px-1 lg:px-3 overflow-y-auto">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon
@@ -46,16 +44,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  onClick={onClose}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors',
+                    'flex items-center gap-3 px-2 lg:px-3 py-2.5 rounded-md text-sm transition-colors',
                     isActive
                       ? 'bg-[#E8E0D5] text-[#0A0A0A] font-medium'
                       : 'text-white/70 hover:text-white hover:bg-white/10'
                   )}
+                  title={item.label}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {item.label}
+                  <Icon className="h-4 w-4 shrink-0 mx-auto lg:mx-0" />
+                  <span className="hidden lg:inline">{item.label}</span>
                 </Link>
               </li>
             )
@@ -63,24 +61,5 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </ul>
       </nav>
     </aside>
-  )
-
-  return (
-    <>
-      {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-64 z-50">
-        {content}
-      </div>
-
-      {/* Mobile overlay */}
-      {open && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-          <div className="relative z-10 w-64 flex-shrink-0">
-            {content}
-          </div>
-        </div>
-      )}
-    </>
   )
 }
