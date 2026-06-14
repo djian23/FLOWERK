@@ -5,78 +5,57 @@ import Link from 'next/link'
 import { formatDate, formatCurrency, EVENT_STATUSES, EVENT_STATUS_COLORS } from '@/lib/utils'
 
 export default async function DashboardPage() {
-  const [
-    totalEvents,
-    totalClients,
-    totalStockItems,
-    totalTransporters,
-    upcomingEvents,
-    recentEvents,
-    financialData,
-  ] = await Promise.all([
-    prisma.event.count(),
-    prisma.client.count(),
-    prisma.stockItem.count(),
-    prisma.transporter.count(),
-    prisma.event.findMany({
-      where: {
-        date: { gte: new Date() },
-        status: { not: 'CLOTURE' },
-      },
-      orderBy: { date: 'asc' },
-      take: 5,
-      include: { client: true },
-    }),
-    prisma.event.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-      include: { client: true },
-    }),
-    prisma.eventCost.findMany({
-      include: { event: true },
-    }),
-  ])
+  let totalEvents = 0
+  let totalClients = 0
+  let totalStockItems = 0
+  let totalTransporters = 0
+  let upcomingEvents: any[] = []
+  let recentEvents: any[] = []
+  let financialData: any[] = []
 
-  const totalRevenue = financialData.reduce((sum, cost) => sum + cost.invoicedPrice, 0)
+  try {
+    ;[
+      totalEvents,
+      totalClients,
+      totalStockItems,
+      totalTransporters,
+      upcomingEvents,
+      recentEvents,
+      financialData,
+    ] = await Promise.all([
+      prisma.event.count(),
+      prisma.client.count(),
+      prisma.stockItem.count(),
+      prisma.transporter.count(),
+      prisma.event.findMany({
+        where: { date: { gte: new Date() }, status: { not: 'CLOTURE' } },
+        orderBy: { date: 'asc' },
+        take: 5,
+        include: { client: true },
+      }),
+      prisma.event.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        include: { client: true },
+      }),
+      prisma.eventCost.findMany({ include: { event: true } }),
+    ])
+  } catch {
+    // DB not available yet
+  }
+
+  const totalRevenue = financialData.reduce((sum: number, cost: any) => sum + cost.invoicedPrice, 0)
   const totalCosts = financialData.reduce(
-    (sum, cost) =>
+    (sum: number, cost: any) =>
       sum + cost.flowers + cost.materials + cost.labor + cost.delivery + cost.subcontracting + cost.misc,
     0
   )
 
   const stats = [
-    {
-      label: 'Événements totaux',
-      value: totalEvents,
-      icon: Calendar,
-      href: '/dashboard/events',
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
-    },
-    {
-      label: 'Clients',
-      value: totalClients,
-      icon: Users,
-      href: '/dashboard/clients',
-      color: 'text-green-600',
-      bg: 'bg-green-50',
-    },
-    {
-      label: 'Articles en stock',
-      value: totalStockItems,
-      icon: Package,
-      href: '/dashboard/stock',
-      color: 'text-purple-600',
-      bg: 'bg-purple-50',
-    },
-    {
-      label: 'Transporteurs',
-      value: totalTransporters,
-      icon: Truck,
-      href: '/dashboard/transporters',
-      color: 'text-orange-600',
-      bg: 'bg-orange-50',
-    },
+    { label: 'Événements totaux', value: totalEvents, icon: Calendar, href: '/dashboard/events', color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Clients', value: totalClients, icon: Users, href: '/dashboard/clients', color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Articles en stock', value: totalStockItems, icon: Package, href: '/dashboard/stock', color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'Transporteurs', value: totalTransporters, icon: Truck, href: '/dashboard/transporters', color: 'text-orange-600', bg: 'bg-orange-50' },
   ]
 
   return (
@@ -86,7 +65,6 @@ export default async function DashboardPage() {
         <p className="text-[#C4B8A8] text-sm">Voici un aperçu de votre activité</p>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon
@@ -108,7 +86,6 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      {/* Financial Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-6">
@@ -146,7 +123,6 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upcoming Events */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Prochains événements</CardTitle>
@@ -159,7 +135,7 @@ export default async function DashboardPage() {
               <p className="text-sm text-[#C4B8A8] py-4 text-center">Aucun événement à venir</p>
             ) : (
               <div className="space-y-3">
-                {upcomingEvents.map((event) => (
+                {upcomingEvents.map((event: any) => (
                   <Link key={event.id} href={`/dashboard/events/${event.id}`}>
                     <div className="flex items-center justify-between p-3 rounded-lg hover:bg-[#E8E0D5]/30 transition-colors">
                       <div>
@@ -168,11 +144,7 @@ export default async function DashboardPage() {
                           {event.client?.name} • {formatDate(event.date)}
                         </div>
                       </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          EVENT_STATUS_COLORS[event.status] || 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
+                      <span className={`text-xs px-2 py-1 rounded-full ${EVENT_STATUS_COLORS[event.status] || 'bg-gray-100 text-gray-800'}`}>
                         {EVENT_STATUSES[event.status] || event.status}
                       </span>
                     </div>
@@ -183,7 +155,6 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Recent Events */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Événements récents</CardTitle>
@@ -197,7 +168,7 @@ export default async function DashboardPage() {
               <p className="text-sm text-[#C4B8A8] py-4 text-center">Aucun événement</p>
             ) : (
               <div className="space-y-3">
-                {recentEvents.map((event) => (
+                {recentEvents.map((event: any) => (
                   <Link key={event.id} href={`/dashboard/events/${event.id}`}>
                     <div className="flex items-center justify-between p-3 rounded-lg hover:bg-[#E8E0D5]/30 transition-colors">
                       <div>
@@ -206,11 +177,7 @@ export default async function DashboardPage() {
                           {event.client?.name} • {event.budget ? formatCurrency(event.budget) : 'Budget non défini'}
                         </div>
                       </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          EVENT_STATUS_COLORS[event.status] || 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
+                      <span className={`text-xs px-2 py-1 rounded-full ${EVENT_STATUS_COLORS[event.status] || 'bg-gray-100 text-gray-800'}`}>
                         {EVENT_STATUSES[event.status] || event.status}
                       </span>
                     </div>
