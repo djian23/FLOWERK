@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  notes     String?
+  events    Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id           String        @id @default(cuid())
+  name         String
+  clientId     String?
+  client       Client?       @relation(fields: [clientId], references: [id])
+  date         DateTime
+  address      String?
+  phone        String?
+  budget       Float?
+  description  String?
+  status       String        @default("DEVIS_EN_COURS")
+  type         String?
+  reservations Reservation[]
+  logistics    Logistics?
+  previews     Preview[]
+  gallery      MediaItem[]
+  documents    Document[]
+  costs        EventCost?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model StockCategory {
+  id            String             @id @default(cuid())
+  name          String
+  subCategories StockSubCategory[]
+  items         StockItem[]
+}
+
+model StockSubCategory {
+  id         String        @id @default(cuid())
+  name       String
+  categoryId String
+  category   StockCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  items      StockItem[]
+}
+
+model StockItem {
+  id              String            @id @default(cuid())
+  name            String
+  categoryId      String?
+  category        StockCategory?    @relation(fields: [categoryId], references: [id])
+  subCategoryId   String?
+  subCategory     StockSubCategory? @relation(fields: [subCategoryId], references: [id])
+  color           String?
+  description     String?
+  totalQuantity   Int               @default(0)
+  purchasePrice   Float?
+  storageLocation String?
+  condition       String            @default("BON_ETAT")
+  notes           String?
+  photos          StockPhoto[]
+  reservations    Reservation[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model StockPhoto {
+  id          String    @id @default(cuid())
+  url         String
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Reservation {
+  id          String    @id @default(cuid())
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+  quantity    Int
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Transporter {
+  id        String      @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  notes     String?
+  logistics Logistics[]
+  createdAt DateTime    @default(now())
+}
+
+model Logistics {
+  id            String              @id @default(cuid())
+  eventId       String              @unique
+  event         Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  transporterId String?
+  transporter   Transporter?        @relation(fields: [transporterId], references: [id])
+  pickupDate    DateTime?
+  deliveryDate  DateTime?
+  returnDate    DateTime?
+  status        String?
+  notes         String?
+  documents     LogisticsDocument[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model LogisticsDocument {
+  id          String    @id @default(cuid())
+  url         String
+  name        String
+  logisticsId String
+  logistics   Logistics @relation(fields: [logisticsId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Preview {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url       String
+  type      String   @default("MOODBOARD")
+  status    String   @default("BROUILLON")
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model MediaItem {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url       String
+  type      String
+  isReel    Boolean  @default(false)
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url       String
+  name      String
+  type      String   @default("AUTRE")
+  createdAt DateTime @default(now())
+}
+
+model EventCost {
+  id             String   @id @default(cuid())
+  eventId        String   @unique
+  event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  flowers        Float    @default(0)
+  materials      Float    @default(0)
+  labor          Float    @default(0)
+  delivery       Float    @default(0)
+  subcontracting Float    @default(0)
+  misc           Float    @default(0)
+  invoicedPrice  Float    @default(0)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
