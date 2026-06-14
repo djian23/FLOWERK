@@ -16,7 +16,7 @@ export default function DocumentsPage({ params }: { params: { id: string } }) {
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/documents?eventId=${params.id}`)
-    setDocuments(await res.json())
+    const _doc = await res.json(); setDocuments(Array.isArray(_doc) ? _doc : [])
     setLoading(false)
   }, [params.id])
 

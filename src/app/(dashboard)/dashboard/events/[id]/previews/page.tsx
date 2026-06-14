@@ -17,7 +17,7 @@ export default function PreviewsPage({ params }: { params: { id: string } }) {
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/previews?eventId=${params.id}`)
-    setPreviews(await res.json())
+    const _p = await res.json(); setPreviews(Array.isArray(_p) ? _p : [])
     setLoading(false)
   }, [params.id])
 

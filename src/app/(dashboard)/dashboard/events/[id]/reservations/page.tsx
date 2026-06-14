@@ -19,7 +19,7 @@ export default function ReservationsPage({ params }: { params: { id: string } })
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/reservations?eventId=${params.id}`)
-    setReservations(await res.json())
+    const _r = await res.json(); setReservations(Array.isArray(_r) ? _r : [])
     setLoading(false)
   }, [params.id])
 
@@ -27,13 +27,13 @@ export default function ReservationsPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     const t = setTimeout(() => {
-      fetch(`/api/stock?search=${search}`).then(r => r.json()).then(setStockItems)
+      fetch(`/api/stock?search=${search}`).then(r => r.json()).then(d => setStockItems(Array.isArray(d) ? d : []))
     }, 300)
     return () => clearTimeout(t)
   }, [search])
 
   useEffect(() => {
-    fetch('/api/stock').then(r => r.json()).then(setStockItems)
+    fetch('/api/stock').then(r => r.json()).then(d => setStockItems(Array.isArray(d) ? d : []))
   }, [])
 
   async function handleAdd(e: React.FormEvent) {

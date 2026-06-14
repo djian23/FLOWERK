@@ -25,7 +25,7 @@ export default function TransporterDetailPage() {
     const res = await fetch(`/api/transporters/${id}`)
     if (!res.ok) { router.push('/dashboard/transporters'); return }
     const data = await res.json()
-    setTransporter(data)
+    setTransporter(data && !data.error ? data : null)
     setEditForm({ name: data.name, phone: data.phone || '', email: data.email || '', notes: data.notes || '' })
     setLoading(false)
   }, [id, router])

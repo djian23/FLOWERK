@@ -31,7 +31,7 @@ export default function NewStockPage() {
   })
 
   useEffect(() => {
-    fetch('/api/categories').then((r) => r.json()).then(setCategories)
+    fetch('/api/categories').then((r) => r.json()).then(d => setCategories(Array.isArray(d) ? d : []))
   }, [])
 
   const selectedCategory = categories.find((c) => c.id === form.categoryId)

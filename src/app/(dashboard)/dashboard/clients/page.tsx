@@ -20,7 +20,7 @@ export default function ClientsPage() {
     if (search) params.set('search', search)
     const res = await fetch(`/api/clients?${params}`)
     const data = await res.json()
-    setClients(data)
+    setClients(Array.isArray(data) ? data : [])
     setLoading(false)
   }, [search])
 

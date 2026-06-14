@@ -54,7 +54,7 @@ export default function EventDetailPage() {
     const res = await fetch(`/api/events/${id}`)
     if (!res.ok) { router.push('/dashboard/events'); return }
     const data = await res.json()
-    setEvent(data)
+    setEvent(data && !data.error ? data : null)
     setEditForm({
       name: data.name,
       clientId: data.clientId || '',
@@ -71,9 +71,9 @@ export default function EventDetailPage() {
 
   useEffect(() => {
     fetchEvent()
-    fetch('/api/clients').then((r) => r.json()).then(setClients)
-    fetch('/api/stock').then((r) => r.json()).then(setStockItems)
-    fetch('/api/transporters').then((r) => r.json()).then(setTransporters)
+    fetch('/api/clients').then((r) => r.json()).then(d => setClients(Array.isArray(d) ? d : []))
+    fetch('/api/stock').then((r) => r.json()).then(d => setStockItems(Array.isArray(d) ? d : []))
+    fetch('/api/transporters').then((r) => r.json()).then(d => setTransporters(Array.isArray(d) ? d : []))
   }, [fetchEvent])
 
   async function handleSave() {

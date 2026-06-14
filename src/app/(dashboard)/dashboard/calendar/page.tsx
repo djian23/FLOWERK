@@ -22,7 +22,7 @@ export default function CalendarPage() {
   useEffect(() => {
     fetch('/api/events')
       .then((r) => r.json())
-      .then((data) => { setEvents(data); setLoading(false) })
+      .then((data) => { setEvents(Array.isArray(data) ? data : []); setLoading(false) })
   }, [])
 
   const year = currentDate.getFullYear()

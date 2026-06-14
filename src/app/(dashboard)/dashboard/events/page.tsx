@@ -40,7 +40,7 @@ export default function EventsPage() {
     if (statusFilter) params.set('status', statusFilter)
     const res = await fetch(`/api/events?${params}`)
     const data = await res.json()
-    setEvents(data)
+    setEvents(Array.isArray(data) ? data : [])
     setLoading(false)
   }, [search, statusFilter])
 

@@ -35,7 +35,7 @@ export default function NewEventPage() {
   })
 
   useEffect(() => {
-    fetch('/api/clients').then((r) => r.json()).then(setClients)
+    fetch('/api/clients').then((r) => r.json()).then(d => setClients(Array.isArray(d) ? d : []))
   }, [])
 
   async function handleSubmit(e: React.FormEvent) {

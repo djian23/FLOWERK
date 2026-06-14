@@ -15,7 +15,7 @@ export default function TransportersPage() {
   useEffect(() => {
     fetch('/api/transporters')
       .then((r) => r.json())
-      .then((data) => { setTransporters(data); setLoading(false) })
+      .then((data) => { setTransporters(Array.isArray(data) ? data : []); setLoading(false) })
   }, [])
 
   return (

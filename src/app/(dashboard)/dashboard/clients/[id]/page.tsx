@@ -31,7 +31,7 @@ export default function ClientDetailPage() {
     const res = await fetch(`/api/clients/${id}`)
     if (!res.ok) { router.push('/dashboard/clients'); return }
     const data = await res.json()
-    setClient(data)
+    setClient(data && !data.error ? data : null)
     setEditForm({
       name: data.name,
       email: data.email || '',

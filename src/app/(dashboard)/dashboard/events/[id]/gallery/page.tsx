@@ -16,7 +16,7 @@ export default function GalleryPage({ params }: { params: { id: string } }) {
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/gallery?eventId=${params.id}`)
-    setItems(await res.json())
+    const _i = await res.json(); setItems(Array.isArray(_i) ? _i : [])
     setLoading(false)
   }, [params.id])
 

@@ -19,7 +19,7 @@ export default function SearchPage() {
     setLoading(true)
     const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
     const data = await res.json()
-    setResults(data)
+    setResults(data && !data.error ? data : { events: [], clients: [], stock: [] })
     setLoading(false)
   }, [])
 

@@ -38,12 +38,12 @@ export default function StockPage() {
     } else if (availabilityFilter === 'unavailable') {
       data = data.filter((item: StockItem) => (item.availableQuantity ?? 0) <= 0)
     }
-    setItems(data)
+    setItems(Array.isArray(data) ? data : [])
     setLoading(false)
   }, [search, categoryFilter, conditionFilter, availabilityFilter])
 
   useEffect(() => {
-    fetch('/api/categories').then((r) => r.json()).then(setCategories)
+    fetch('/api/categories').then((r) => r.json()).then(d => setCategories(Array.isArray(d) ? d : []))
   }, [])
 
   useEffect(() => {
