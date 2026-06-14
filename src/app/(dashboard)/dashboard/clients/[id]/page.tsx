@@ -1,122 +1,227 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, Edit, Save, X, Trash2, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Client } from '@/types'
-import { EVENT_STATUSES, EVENT_STATUS_COLORS, formatDate } from '@/lib/utils'
-import { ArrowLeft, Edit2, Check, X, Trash2, Phone, Mail, MapPin } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Client, Event } from '@/types'
+import { formatDate, formatCurrency, EVENT_STATUSES, EVENT_STATUS_COLORS } from '@/lib/utils'
 
-export default function ClientDetailPage({ params }: { params: { id: string } }) {
+export default function ClientDetailPage() {
+  const { id } = useParams<{ id: string }>()
   const router = useRouter()
-  const [client, setClient] = useState<any>(null)
-  const [editing, setEditing] = useState(false)
+  const [client, setClient] = useState<Client & { events: Event[] } | null>(null)
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', notes: '' })
+  const [editForm, setEditForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    notes: '',
+  })
 
-  const load = useCallback(async () => {
-    const res = await fetch(`/api/clients/${params.id}`)
+  const fetchClient = useCallback(async () => {
+    const res = await fetch(`/api/clients/${id}`)
+    if (!res.ok) { router.push('/dashboard/clients'); return }
     const data = await res.json()
     setClient(data)
-    setForm({ name: data.name || '', email: data.email || '', phone: data.phone || '', address: data.address || '', notes: data.notes || '' })
+    setEditForm({
+      name: data.name,
+      email: data.email || '',
+      phone: data.phone || '',
+      address: data.address || '',
+      notes: data.notes || '',
+    })
     setLoading(false)
-  }, [params.id])
+  }, [id, router])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { fetchClient() }, [fetchClient])
 
   async function handleSave() {
     setSaving(true)
-    const res = await fetch(`/api/clients/${params.id}`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form)
+    await fetch(`/api/clients/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editForm),
     })
-    if (res.ok) { await load(); setEditing(false) }
+    await fetchClient()
+    setEditing(false)
     setSaving(false)
   }
 
   async function handleDelete() {
-    if (!confirm('Supprimer ce client ?')) return
-    await fetch(`/api/clients/${params.id}`, { method: 'DELETE' })
+    if (!confirm('Supprimer ce client ? Cette action est irréversible.')) return
+    await fetch(`/api/clients/${id}`, { method: 'DELETE' })
     router.push('/dashboard/clients')
   }
 
-  if (loading) return <div className="animate-pulse h-96 bg-[#E8E0D5] rounded-lg" />
-  if (!client) return <div>Client non trouvé</div>
+  if (loading) return <div className="text-center py-12 text-[#C4B8A8]">Chargement...</div>
+  if (!client) return null
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard/clients" className="text-[#C4B8A8] hover:text-[#0A0A0A]"><ArrowLeft className="h-5 w-5" /></Link>
-          <h1 className="font-serif text-2xl text-[#0A0A0A]">{client.name}</h1>
+          <Link href="/dashboard/clients">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Retour
+            </Button>
+          </Link>
+          <div className="w-10 h-10 rounded-full bg-[#E8E0D5] flex items-center justify-center">
+            <span className="text-[#0A0A0A] font-semibold">{client.name.charAt(0).toUpperCase()}</span>
+          </div>
+          <h2 className="font-serif text-2xl text-[#0A0A0A]">{client.name}</h2>
         </div>
         <div className="flex gap-2">
-          {!editing ? (
+          {editing ? (
             <>
-              <Button variant="outline" onClick={() => setEditing(true)} className="gap-2"><Edit2 className="h-4 w-4" /> Modifier</Button>
-              <Button variant="outline" onClick={handleDelete} className="gap-2 text-red-600 border-red-200 hover:bg-red-50"><Trash2 className="h-4 w-4" /> Supprimer</Button>
+              <Button onClick={() => setEditing(false)} variant="outline" size="sm">
+                <X className="h-3 w-3 mr-1" /> Annuler
+              </Button>
+              <Button onClick={handleSave} disabled={saving} size="sm" className="bg-[#0A0A0A] text-white">
+                <Save className="h-3 w-3 mr-1" /> {saving ? 'Enregistrement...' : 'Enregistrer'}
+              </Button>
             </>
           ) : (
             <>
-              <Button onClick={handleSave} disabled={saving} className="bg-[#0A0A0A] hover:bg-[#1a1a1a] gap-2"><Check className="h-4 w-4" />{saving ? 'Sauvegarde...' : 'Enregistrer'}</Button>
-              <Button variant="outline" onClick={() => setEditing(false)} className="gap-2"><X className="h-4 w-4" /> Annuler</Button>
+              <Button onClick={() => setEditing(true)} variant="outline" size="sm">
+                <Edit className="h-3 w-3 mr-1" /> Modifier
+              </Button>
+              <Button onClick={handleDelete} variant="outline" size="sm" className="text-red-500 border-red-200 hover:bg-red-50">
+                <Trash2 className="h-3 w-3 mr-1" /> Supprimer
+              </Button>
             </>
           )}
         </div>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Informations</CardTitle></CardHeader>
-        <CardContent className="p-6">
-          {editing ? (
-            <div className="space-y-4">
-              <div className="space-y-2"><Label>Nom *</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Email</Label><Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} /></div>
-                <div className="space-y-2"><Label>Téléphone</Label><Input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} /></div>
-              </div>
-              <div className="space-y-2"><Label>Adresse</Label><Input value={form.address} onChange={e => setForm({...form, address: e.target.value})} /></div>
-              <div className="space-y-2"><Label>Notes</Label><Textarea value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} rows={3} /></div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {client.email && <div className="flex items-center gap-2 text-sm"><Mail className="h-4 w-4 text-[#C4B8A8]" />{client.email}</div>}
-              {client.phone && <div className="flex items-center gap-2 text-sm"><Phone className="h-4 w-4 text-[#C4B8A8]" />{client.phone}</div>}
-              {client.address && <div className="flex items-center gap-2 text-sm"><MapPin className="h-4 w-4 text-[#C4B8A8]" />{client.address}</div>}
-              {client.notes && <p className="text-sm text-[#C4B8A8] mt-2">{client.notes}</p>}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {client.events && (
-        <Card>
-          <CardHeader><CardTitle className="text-base">Événements ({client.events.length})</CardTitle></CardHeader>
-          <CardContent>
-            {client.events.length === 0 ? (
-              <p className="text-sm text-[#C4B8A8]">Aucun événement</p>
-            ) : (
-              <ul className="divide-y divide-[#E8E0D5]">
-                {client.events.map((event: any) => (
-                  <li key={event.id} className="py-3 flex items-center justify-between">
+      <div className="grid grid-cols-3 gap-6">
+        <div className="col-span-2 space-y-6">
+          <Card>
+            <CardHeader><CardTitle>Informations</CardTitle></CardHeader>
+            <CardContent>
+              {editing ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Nom complet *</Label>
+                    <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="mt-1" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Link href={`/dashboard/events/${event.id}`} className="text-sm font-medium text-[#0A0A0A] hover:underline">{event.name}</Link>
-                      <p className="text-xs text-[#C4B8A8]">{formatDate(event.date)}</p>
+                      <Label>Email</Label>
+                      <Input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="mt-1" />
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${EVENT_STATUS_COLORS[event.status] || 'bg-gray-100'}`}>{EVENT_STATUSES[event.status] || event.status}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      )}
+                    <div>
+                      <Label>Téléphone</Label>
+                      <Input value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="mt-1" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Adresse</Label>
+                    <Input value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label>Notes</Label>
+                    <Textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} className="mt-1" rows={3} />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {client.email && (
+                    <div>
+                      <div className="text-xs text-[#C4B8A8]">Email</div>
+                      <a href={`mailto:${client.email}`} className="text-sm hover:underline">{client.email}</a>
+                    </div>
+                  )}
+                  {client.phone && (
+                    <div>
+                      <div className="text-xs text-[#C4B8A8]">Téléphone</div>
+                      <a href={`tel:${client.phone}`} className="text-sm hover:underline">{client.phone}</a>
+                    </div>
+                  )}
+                  {client.address && (
+                    <div>
+                      <div className="text-xs text-[#C4B8A8]">Adresse</div>
+                      <div className="text-sm">{client.address}</div>
+                    </div>
+                  )}
+                  {client.notes && (
+                    <div>
+                      <div className="text-xs text-[#C4B8A8]">Notes</div>
+                      <div className="text-sm bg-[#E8E0D5]/30 rounded p-3 mt-1">{client.notes}</div>
+                    </div>
+                  )}
+                  {!client.email && !client.phone && !client.address && !client.notes && (
+                    <p className="text-sm text-[#C4B8A8]">Aucune information supplémentaire</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Events */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Événements ({client.events?.length || 0})</CardTitle>
+              <Link href={`/dashboard/events/new`}>
+                <Button size="sm" variant="outline" className="gap-1">
+                  <Plus className="h-3 w-3" /> Nouvel événement
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent className="p-0">
+              {!client.events?.length ? (
+                <div className="text-center py-6 text-[#C4B8A8]">Aucun événement</div>
+              ) : (
+                <div className="divide-y divide-[#E8E0D5]">
+                  {client.events.map((event) => (
+                    <Link key={event.id} href={`/dashboard/events/${event.id}`}>
+                      <div className="flex items-center justify-between px-4 py-3 hover:bg-[#E8E0D5]/20 transition-colors">
+                        <div>
+                          <div className="text-sm font-medium">{event.name}</div>
+                          <div className="text-xs text-[#C4B8A8] mt-0.5">
+                            {formatDate(event.date)}
+                            {event.budget && ` • ${formatCurrency(event.budget)}`}
+                          </div>
+                        </div>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${EVENT_STATUS_COLORS[event.status] || 'bg-gray-100 text-gray-800'}`}>
+                          {EVENT_STATUSES[event.status] || event.status}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div>
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-[#E8E0D5] flex items-center justify-center mx-auto mb-3">
+                  <span className="text-[#0A0A0A] font-bold text-2xl">{client.name.charAt(0).toUpperCase()}</span>
+                </div>
+                <div className="font-semibold text-[#0A0A0A]">{client.name}</div>
+                <div className="text-xs text-[#C4B8A8] mt-1">Client depuis {formatDate(client.createdAt)}</div>
+                <div className="mt-3 pt-3 border-t border-[#E8E0D5]">
+                  <div className="text-2xl font-bold text-[#0A0A0A]">{client.events?.length || 0}</div>
+                  <div className="text-xs text-[#C4B8A8]">événement(s)</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }
