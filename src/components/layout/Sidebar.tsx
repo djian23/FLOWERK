@@ -3,9 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
 import {
-  LayoutDashboard, Package, Calendar, Users, Truck, Search, LogOut, Folder
+  LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -62,15 +61,6 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-white/10">
-        <button
-          onClick={() => signOut({ callbackUrl: '/login' })}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-        >
-          <LogOut className="h-4 w-4" />
-          Déconnexion
-        </button>
-      </div>
     </aside>
   )
 }
