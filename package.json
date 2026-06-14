@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
@@ -43,6 +43,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.11",
     "@types/multer": "^1.4.12",
     "@types/node": "^20.17.9",
     "@types/react": "^18.3.17",
