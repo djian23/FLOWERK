@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import {
-  LayoutDashboard, Package, Calendar, Users, Truck, Search, LogOut, Image, Folder
+  LayoutDashboard, Package, Calendar, Users, Truck, Search, LogOut, Folder
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -23,9 +24,16 @@ export function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 w-64 bg-[#0A0A0A] flex flex-col z-50">
-      <div className="px-6 py-8 border-b border-white/10">
-        <h1 className="font-serif text-2xl text-white tracking-widest">FLOWER K</h1>
-        <p className="text-[#C4B8A8] text-xs tracking-[0.2em] mt-1 uppercase">Administration</p>
+      <div className="px-4 py-6 border-b border-white/10 flex flex-col items-center">
+        <Image
+          src="/logo.jpeg"
+          alt="Flower K"
+          width={160}
+          height={160}
+          className="rounded-sm object-contain"
+          priority
+        />
+        <p className="text-[#C4B8A8] text-xs tracking-[0.2em] mt-3 uppercase">Administration</p>
       </div>
 
       <nav className="flex-1 py-6 px-3 overflow-y-auto">
