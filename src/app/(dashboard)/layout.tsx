@@ -1,18 +1,7 @@
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Header } from '@/components/layout/Header'
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  let session = null
-  try {
-    session = await getServerSession(authOptions)
-  } catch {
-    redirect('/login')
-  }
-  if (!session) redirect('/login')
-
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <Sidebar />
