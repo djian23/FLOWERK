@@ -27,11 +27,9 @@ export function Sidebar() {
         <p className="text-[#C4B8A8] text-xs tracking-[0.2em] mt-3 uppercase">Administration</p>
       </div>
 
-      {/* Mobile logo (icon only) */}
-      <div className="flex lg:hidden items-center justify-center py-4 border-b border-white/10">
-        <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-          <span className="text-white text-xs font-serif font-bold">K</span>
-        </div>
+      {/* Mobile logo */}
+      <div className="flex lg:hidden items-center justify-center py-3 border-b border-white/10">
+        <Image src="/logo.jpeg" alt="Flower K" width={40} height={40} className="rounded-sm object-contain" priority />
       </div>
 
       <nav className="flex-1 py-4 px-1 lg:px-3 overflow-y-auto">
