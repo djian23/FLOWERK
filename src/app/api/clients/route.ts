@@ -39,6 +39,13 @@ export async function POST(req: NextRequest) {
         phone: body.phone || null,
         address: body.address || null,
         notes: body.notes || null,
+        source: body.source || null,
+        clientType: body.clientType || null,
+        preferredStyle: body.preferredStyle || null,
+        avoidedColors: body.avoidedColors || null,
+        floralAllergies: body.floralAllergies || null,
+        usualBudget: body.usualBudget ? parseFloat(body.usualBudget) : null,
+        isVip: body.isVip ?? false,
       },
     })
     return NextResponse.json(client, { status: 201 })

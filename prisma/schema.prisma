@@ -8,41 +8,75 @@ datasource db {
 }
 
 model Client {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?
-  phone     String?
-  address   String?
-  notes     String?
-  events    Event[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  email           String?
+  phone           String?
+  address         String?
+  notes           String?
+  source          String?
+  clientType      String?
+  preferredStyle  String?
+  avoidedColors   String?
+  floralAllergies String?
+  usualBudget     Float?
+  isVip           Boolean  @default(false)
+  events          Event[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Event {
-  id           String        @id @default(cuid())
-  name         String
-  clientId     String?
-  client       Client?       @relation(fields: [clientId], references: [id])
-  date         DateTime
-  address      String?
-  phone        String?
-  budget       Float?
-  description  String?
-  status       String        @default("DEVIS_EN_COURS")
-  type         String?
-  reservations Reservation[]
-  logistics    Logistics?
-  previews     Preview[]
-  gallery      MediaItem[]
-  documents    Document[]
-  costs        EventCost?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id          String  @id @default(cuid())
+  name        String
+  clientId    String?
+  client      Client? @relation(fields: [clientId], references: [id])
+  date        DateTime
+  address     String?
+  phone       String?
+  budget      Float?
+  description String?
+  status      String  @default("DEVIS_EN_COURS")
+  type        String?
+  style       String?
+  theme       String?
+  colorPalette String?
+  isOutdoor   Boolean @default(false)
+  guestCount  Int?
+  roundTables Int?
+  rectTables  Int?
+  squareTables Int?
+  centerpieces Int?
+  ceremonyCompositions Int?
+  roomWidth   Float?
+  roomLength  Float?
+  roomHeight  Float?
+  setupStartTime   DateTime?
+  setupEndTime     DateTime?
+  dismantlingTime  DateTime?
+  weddingPlannerName  String?
+  weddingPlannerPhone String?
+  catererName      String?
+  photographerName String?
+  onSiteContactName  String?
+  onSiteContactPhone String?
+  floorPlanUrl     String?
+
+  reservations     Reservation[]
+  logistics        Logistics?
+  previews         Preview[]
+  gallery          MediaItem[]
+  documents        Document[]
+  costs            EventCost?
+  checklist        ChecklistItem[]
+  freshFlowers     FreshFlowerOrder[]
+  timeline         EventTimeline[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model StockCategory {
-  id            String             @id @default(cuid())
+  id            String            @id @default(cuid())
   name          String
   subCategories StockSubCategory[]
   items         StockItem[]
@@ -70,10 +104,24 @@ model StockItem {
   storageLocation String?
   condition       String            @default("BON_ETAT")
   notes           String?
+  material        String?
+  dimensions      String?
+  weight          Float?
+  capacity        String?
+  shape           String?
+  isFoldable      Boolean   @default(false)
+  pieces          Int?
+  species         String?
+  stemLength      Float?
+  archShape       String?
+  assemblyTime    Int?
+  candleType      String?
+  burnTime        Int?
+
   photos          StockPhoto[]
   reservations    Reservation[]
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model StockPhoto {
@@ -107,19 +155,25 @@ model Transporter {
 }
 
 model Logistics {
-  id            String              @id @default(cuid())
-  eventId       String              @unique
-  event         Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  transporterId String?
-  transporter   Transporter?        @relation(fields: [transporterId], references: [id])
-  pickupDate    DateTime?
-  deliveryDate  DateTime?
-  returnDate    DateTime?
-  status        String?
-  notes         String?
-  documents     LogisticsDocument[]
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  id               String       @id @default(cuid())
+  eventId          String       @unique
+  event            Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  transporterId    String?
+  transporter      Transporter? @relation(fields: [transporterId], references: [id])
+  pickupDate       DateTime?
+  deliveryDate     DateTime?
+  returnDate       DateTime?
+  status           String?
+  vehicleType      String?
+  tripsCount       Int?
+  estimatedVolume  String?
+  departureAddress String?
+  loadingNotes     String?
+  hasFragileItems  Boolean      @default(false)
+  notes            String?
+  documents        LogisticsDocument[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 }
 
 model LogisticsDocument {
@@ -138,6 +192,9 @@ model Preview {
   url       String
   type      String   @default("MOODBOARD")
   status    String   @default("BROUILLON")
+  zone      String?
+  version   Int      @default(1)
+  clientFeedback String?
   notes     String?
   createdAt DateTime @default(now())
 }
@@ -164,17 +221,115 @@ model Document {
 }
 
 model EventCost {
-  id             String   @id @default(cuid())
-  eventId        String   @unique
-  event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  flowers        Float    @default(0)
-  materials      Float    @default(0)
-  labor          Float    @default(0)
-  delivery       Float    @default(0)
-  subcontracting Float    @default(0)
-  misc           Float    @default(0)
-  invoicedPrice  Float    @default(0)
-  notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               String   @id @default(cuid())
+  eventId          String   @unique
+  event            Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  flowers          Float    @default(0)
+  freshFlowersCost Float    @default(0)
+  materials        Float    @default(0)
+  labor            Float    @default(0)
+  delivery         Float    @default(0)
+  subcontracting   Float    @default(0)
+  misc             Float    @default(0)
+  postEventCosts   Float    @default(0)
+  invoicedPrice    Float    @default(0)
+  deposit          Float    @default(0)
+  depositDate      DateTime?
+  balanceDueDate   DateTime?
+  paymentMethod    String?
+  discount         Float    @default(0)
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ChecklistItem {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  label     String
+  done      Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model FreshFlowerOrder {
+  id           String    @id @default(cuid())
+  eventId      String
+  event        Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  supplierId   String?
+  supplier     Supplier? @relation(fields: [supplierId], references: [id])
+  species      String
+  quantity     Int
+  unit         String    @default("tiges")
+  unitPrice    Float?
+  orderDate    DateTime?
+  deliveryDate DateTime?
+  received     Boolean   @default(false)
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Supplier {
+  id           String             @id @default(cuid())
+  name         String
+  phone        String?
+  email        String?
+  address      String?
+  specialty    String?
+  notes        String?
+  freshFlowers FreshFlowerOrder[]
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model FloralRecipe {
+  id            String             @id @default(cuid())
+  name          String
+  description   String?
+  prepTime      Int?
+  estimatedCost Float?
+  ingredients   FloralIngredient[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model FloralIngredient {
+  id        String       @id @default(cuid())
+  recipeId  String
+  recipe    FloralRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  name      String
+  quantity  Int
+  unit      String       @default("tiges")
+  notes     String?
+}
+
+model EventTemplate {
+  id          String                  @id @default(cuid())
+  name        String
+  type        String?
+  style       String?
+  description String?
+  checklist   TemplateChecklistItem[]
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+}
+
+model TemplateChecklistItem {
+  id         String        @id @default(cuid())
+  templateId String
+  template   EventTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  label      String
+  order      Int           @default(0)
+}
+
+model EventTimeline {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  action    String
+  details   String?
+  automatic Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

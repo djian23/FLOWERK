@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Edit, Save, X, Plus, Trash2, Upload, FileText, Image, Film, Package,
-  Truck, DollarSign, Eye, Calendar, User, MapPin, Phone, Tag
+  Truck, DollarSign, Eye, Calendar, User, MapPin, Phone, Tag, ListChecks, Flower, History
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,6 +65,28 @@ export default function EventDetailPage() {
       description: data.description || '',
       status: data.status,
       type: data.type || '',
+      style: data.style || '',
+      theme: data.theme || '',
+      colorPalette: data.colorPalette || '',
+      isOutdoor: data.isOutdoor ?? false,
+      guestCount: data.guestCount ? String(data.guestCount) : '',
+      roundTables: data.roundTables ? String(data.roundTables) : '',
+      rectTables: data.rectTables ? String(data.rectTables) : '',
+      squareTables: data.squareTables ? String(data.squareTables) : '',
+      centerpieces: data.centerpieces ? String(data.centerpieces) : '',
+      ceremonyCompositions: data.ceremonyCompositions ? String(data.ceremonyCompositions) : '',
+      roomWidth: data.roomWidth ? String(data.roomWidth) : '',
+      roomLength: data.roomLength ? String(data.roomLength) : '',
+      roomHeight: data.roomHeight ? String(data.roomHeight) : '',
+      setupStartTime: data.setupStartTime ? new Date(data.setupStartTime).toISOString().slice(0, 16) : '',
+      setupEndTime: data.setupEndTime ? new Date(data.setupEndTime).toISOString().slice(0, 16) : '',
+      dismantlingTime: data.dismantlingTime ? new Date(data.dismantlingTime).toISOString().slice(0, 16) : '',
+      weddingPlannerName: data.weddingPlannerName || '',
+      weddingPlannerPhone: data.weddingPlannerPhone || '',
+      catererName: data.catererName || '',
+      photographerName: data.photographerName || '',
+      onSiteContactName: data.onSiteContactName || '',
+      onSiteContactPhone: data.onSiteContactPhone || '',
     })
     setLoading(false)
   }, [id, router])
@@ -314,6 +336,9 @@ export default function EventDetailPage() {
           <TabsTrigger value="gallery">Galerie ({event.gallery?.length || 0})</TabsTrigger>
           <TabsTrigger value="documents">Documents ({event.documents?.length || 0})</TabsTrigger>
           <TabsTrigger value="finance">Finance</TabsTrigger>
+          <TabsTrigger value="checklist">Checklist</TabsTrigger>
+          <TabsTrigger value="freshflowers">Fleurs fraîches</TabsTrigger>
+          <TabsTrigger value="timeline">Timeline</TabsTrigger>
         </TabsList>
 
         {/* GENERAL TAB */}
@@ -366,6 +391,117 @@ export default function EventDetailPage() {
                   <div className="col-span-2">
                     <Label>Description</Label>
                     <Textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="mt-1" rows={4} />
+                  </div>
+
+                  {/* Décoration section */}
+                  <div className="col-span-2 border-t border-[#E8E0D5] pt-4 mt-2">
+                    <div className="text-sm font-medium text-[#0A0A0A] mb-3">Décoration</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Style</Label>
+                        <Input value={editForm.style || ''} onChange={(e) => setEditForm({ ...editForm, style: e.target.value })} className="mt-1" placeholder="Champêtre, Moderne..." />
+                      </div>
+                      <div>
+                        <Label>Thème</Label>
+                        <Input value={editForm.theme || ''} onChange={(e) => setEditForm({ ...editForm, theme: e.target.value })} className="mt-1" placeholder="Botanique, Romantique..." />
+                      </div>
+                      <div>
+                        <Label>Palette de couleurs</Label>
+                        <Input value={editForm.colorPalette || ''} onChange={(e) => setEditForm({ ...editForm, colorPalette: e.target.value })} className="mt-1" placeholder="Blanc, Or, Rose poudré..." />
+                      </div>
+                      <div>
+                        <Label>Nombre d&apos;invités</Label>
+                        <Input type="number" value={editForm.guestCount || ''} onChange={(e) => setEditForm({ ...editForm, guestCount: e.target.value })} className="mt-1" />
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="isOutdoor" checked={editForm.isOutdoor || false} onChange={(e) => setEditForm({ ...editForm, isOutdoor: e.target.checked })} className="h-4 w-4 rounded" />
+                        <Label htmlFor="isOutdoor">En extérieur</Label>
+                      </div>
+                      <div />
+                      <div>
+                        <Label>Tables rondes</Label>
+                        <Input type="number" value={editForm.roundTables || ''} onChange={(e) => setEditForm({ ...editForm, roundTables: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Tables rectangulaires</Label>
+                        <Input type="number" value={editForm.rectTables || ''} onChange={(e) => setEditForm({ ...editForm, rectTables: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Tables carrées</Label>
+                        <Input type="number" value={editForm.squareTables || ''} onChange={(e) => setEditForm({ ...editForm, squareTables: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Centres de table</Label>
+                        <Input type="number" value={editForm.centerpieces || ''} onChange={(e) => setEditForm({ ...editForm, centerpieces: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Compositions cérémonie</Label>
+                        <Input type="number" value={editForm.ceremonyCompositions || ''} onChange={(e) => setEditForm({ ...editForm, ceremonyCompositions: e.target.value })} className="mt-1" />
+                      </div>
+                      <div />
+                      <div>
+                        <Label>Largeur salle (m)</Label>
+                        <Input type="number" step="0.1" value={editForm.roomWidth || ''} onChange={(e) => setEditForm({ ...editForm, roomWidth: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Longueur salle (m)</Label>
+                        <Input type="number" step="0.1" value={editForm.roomLength || ''} onChange={(e) => setEditForm({ ...editForm, roomLength: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Hauteur salle (m)</Label>
+                        <Input type="number" step="0.1" value={editForm.roomHeight || ''} onChange={(e) => setEditForm({ ...editForm, roomHeight: e.target.value })} className="mt-1" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Planning section */}
+                  <div className="col-span-2 border-t border-[#E8E0D5] pt-4 mt-2">
+                    <div className="text-sm font-medium text-[#0A0A0A] mb-3">Planning</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Début installation</Label>
+                        <Input type="datetime-local" value={editForm.setupStartTime || ''} onChange={(e) => setEditForm({ ...editForm, setupStartTime: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Fin installation</Label>
+                        <Input type="datetime-local" value={editForm.setupEndTime || ''} onChange={(e) => setEditForm({ ...editForm, setupEndTime: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Démontage</Label>
+                        <Input type="datetime-local" value={editForm.dismantlingTime || ''} onChange={(e) => setEditForm({ ...editForm, dismantlingTime: e.target.value })} className="mt-1" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Intervenants section */}
+                  <div className="col-span-2 border-t border-[#E8E0D5] pt-4 mt-2">
+                    <div className="text-sm font-medium text-[#0A0A0A] mb-3">Intervenants</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Wedding Planner</Label>
+                        <Input value={editForm.weddingPlannerName || ''} onChange={(e) => setEditForm({ ...editForm, weddingPlannerName: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Tél. Wedding Planner</Label>
+                        <Input value={editForm.weddingPlannerPhone || ''} onChange={(e) => setEditForm({ ...editForm, weddingPlannerPhone: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Traiteur</Label>
+                        <Input value={editForm.catererName || ''} onChange={(e) => setEditForm({ ...editForm, catererName: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Photographe</Label>
+                        <Input value={editForm.photographerName || ''} onChange={(e) => setEditForm({ ...editForm, photographerName: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Contact sur site</Label>
+                        <Input value={editForm.onSiteContactName || ''} onChange={(e) => setEditForm({ ...editForm, onSiteContactName: e.target.value })} className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>Tél. contact site</Label>
+                        <Input value={editForm.onSiteContactPhone || ''} onChange={(e) => setEditForm({ ...editForm, onSiteContactPhone: e.target.value })} className="mt-1" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -882,6 +1018,52 @@ export default function EventDetailPage() {
                 )}
               </CardContent>
             </Card>
+          </div>
+        </TabsContent>
+
+        {/* CHECKLIST TAB */}
+        <TabsContent value="checklist">
+          <div className="text-center py-8">
+            <Link href={`/dashboard/events/${id}/checklist`}>
+              <Button className="bg-[#0A0A0A] text-white gap-2">
+                <ListChecks className="h-4 w-4" />
+                Ouvrir la checklist
+              </Button>
+            </Link>
+            <p className="text-sm text-[#C4B8A8] mt-2">
+              {(event as any).checklist?.length || 0} tâche(s) •{' '}
+              {(event as any).checklist?.filter((i: any) => i.done).length || 0} complétée(s)
+            </p>
+          </div>
+        </TabsContent>
+
+        {/* FRESH FLOWERS TAB */}
+        <TabsContent value="freshflowers">
+          <div className="text-center py-8">
+            <Link href={`/dashboard/events/${id}/fresh-flowers`}>
+              <Button className="bg-[#0A0A0A] text-white gap-2">
+                <Flower className="h-4 w-4" />
+                Gérer les fleurs fraîches
+              </Button>
+            </Link>
+            <p className="text-sm text-[#C4B8A8] mt-2">
+              {(event as any).freshFlowers?.length || 0} commande(s) de fleurs
+            </p>
+          </div>
+        </TabsContent>
+
+        {/* TIMELINE TAB */}
+        <TabsContent value="timeline">
+          <div className="text-center py-8">
+            <Link href={`/dashboard/events/${id}/timeline`}>
+              <Button className="bg-[#0A0A0A] text-white gap-2">
+                <History className="h-4 w-4" />
+                Voir la timeline
+              </Button>
+            </Link>
+            <p className="text-sm text-[#C4B8A8] mt-2">
+              {(event as any).timeline?.length || 0} entrée(s) dans la timeline
+            </p>
           </div>
         </TabsContent>
       </Tabs>

@@ -32,6 +32,13 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         phone: body.phone || null,
         address: body.address || null,
         notes: body.notes || null,
+        source: body.source !== undefined ? (body.source || null) : undefined,
+        clientType: body.clientType !== undefined ? (body.clientType || null) : undefined,
+        preferredStyle: body.preferredStyle !== undefined ? (body.preferredStyle || null) : undefined,
+        avoidedColors: body.avoidedColors !== undefined ? (body.avoidedColors || null) : undefined,
+        floralAllergies: body.floralAllergies !== undefined ? (body.floralAllergies || null) : undefined,
+        usualBudget: body.usualBudget !== undefined ? (body.usualBudget ? parseFloat(body.usualBudget) : null) : undefined,
+        isVip: body.isVip !== undefined ? body.isVip : undefined,
       },
     })
     return NextResponse.json(client)

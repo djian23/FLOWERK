@@ -28,6 +28,19 @@ export default function NewStockPage() {
     storageLocation: '',
     condition: 'BON_ETAT',
     notes: '',
+    material: '',
+    dimensions: '',
+    weight: '',
+    capacity: '',
+    shape: '',
+    isFoldable: false,
+    pieces: '',
+    species: '',
+    stemLength: '',
+    archShape: '',
+    assemblyTime: '',
+    candleType: '',
+    burnTime: '',
   })
 
   useEffect(() => {
@@ -236,6 +249,71 @@ export default function NewStockPage() {
                   rows={2}
                   placeholder="Notes internes..."
                 />
+              </div>
+
+              {/* Specific attributes */}
+              <div className="col-span-2 border-t border-[#E8E0D5] pt-4">
+                <details className="group">
+                  <summary className="cursor-pointer text-sm font-medium text-[#0A0A0A] flex items-center gap-2 list-none select-none">
+                    <span className="group-open:rotate-90 transition-transform inline-block">▶</span>
+                    Attributs spécifiques (optionnel)
+                  </summary>
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Matière</Label>
+                      <Input value={form.material} onChange={(e) => setForm({ ...form, material: e.target.value })} className="mt-1" placeholder="Verre, Métal, Tissu..." />
+                    </div>
+                    <div>
+                      <Label>Dimensions</Label>
+                      <Input value={form.dimensions} onChange={(e) => setForm({ ...form, dimensions: e.target.value })} className="mt-1" placeholder="100x50x200cm" />
+                    </div>
+                    <div>
+                      <Label>Poids (kg)</Label>
+                      <Input type="number" step="0.1" value={form.weight} onChange={(e) => setForm({ ...form, weight: e.target.value })} className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Capacité</Label>
+                      <Input value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} className="mt-1" placeholder="50cl" />
+                    </div>
+                    <div>
+                      <Label>Forme</Label>
+                      <Input value={form.shape} onChange={(e) => setForm({ ...form, shape: e.target.value })} className="mt-1" placeholder="Cylindrique, Carré..." />
+                    </div>
+                    <div>
+                      <Label>Nombre de pièces</Label>
+                      <Input type="number" value={form.pieces} onChange={(e) => setForm({ ...form, pieces: e.target.value })} className="mt-1" />
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <input type="checkbox" id="isFoldable" checked={form.isFoldable} onChange={(e) => setForm({ ...form, isFoldable: e.target.checked })} className="h-4 w-4 rounded" />
+                      <Label htmlFor="isFoldable">Pliable</Label>
+                    </div>
+                    <div />
+                    <div>
+                      <Label>Espèce (végétaux)</Label>
+                      <Input value={form.species} onChange={(e) => setForm({ ...form, species: e.target.value })} className="mt-1" placeholder="Rosa, Peony..." />
+                    </div>
+                    <div>
+                      <Label>Longueur tige (cm)</Label>
+                      <Input type="number" step="0.1" value={form.stemLength} onChange={(e) => setForm({ ...form, stemLength: e.target.value })} className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Forme arche</Label>
+                      <Input value={form.archShape} onChange={(e) => setForm({ ...form, archShape: e.target.value })} className="mt-1" placeholder="Demi-cercle, Carré..." />
+                    </div>
+                    <div>
+                      <Label>Temps d&apos;assemblage (min)</Label>
+                      <Input type="number" value={form.assemblyTime} onChange={(e) => setForm({ ...form, assemblyTime: e.target.value })} className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Type de bougie</Label>
+                      <Input value={form.candleType} onChange={(e) => setForm({ ...form, candleType: e.target.value })} className="mt-1" placeholder="Pilier, Chauffe-plat..." />
+                    </div>
+                    <div>
+                      <Label>Durée combustion (h)</Label>
+                      <Input type="number" value={form.burnTime} onChange={(e) => setForm({ ...form, burnTime: e.target.value })} className="mt-1" />
+                    </div>
+                  </div>
+                </details>
               </div>
             </div>
 

@@ -21,7 +21,7 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [form, setForm] = useState<Record<string, string>>({})
+  const [form, setForm] = useState<Record<string, string | boolean>>({})
 
   const load = useCallback(async () => {
     const [itemRes, catRes] = await Promise.all([
@@ -42,6 +42,19 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
       storageLocation: itemData.storageLocation || '',
       condition: itemData.condition || 'BON_ETAT',
       notes: itemData.notes || '',
+      material: itemData.material || '',
+      dimensions: itemData.dimensions || '',
+      weight: itemData.weight ? String(itemData.weight) : '',
+      capacity: itemData.capacity || '',
+      shape: itemData.shape || '',
+      isFoldable: itemData.isFoldable || false,
+      pieces: itemData.pieces ? String(itemData.pieces) : '',
+      species: itemData.species || '',
+      stemLength: itemData.stemLength ? String(itemData.stemLength) : '',
+      archShape: itemData.archShape || '',
+      assemblyTime: itemData.assemblyTime ? String(itemData.assemblyTime) : '',
+      candleType: itemData.candleType || '',
+      burnTime: itemData.burnTime ? String(itemData.burnTime) : '',
     })
     setLoading(false)
   }, [params.id])
@@ -194,6 +207,31 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
               <div className="space-y-2"><Label>Emplacement</Label><Input value={form.storageLocation} onChange={e => setForm({...form, storageLocation: e.target.value})} /></div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} /></div>
               <div className="space-y-2"><Label>Notes</Label><Textarea value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} rows={2} /></div>
+              <details className="group">
+                <summary className="cursor-pointer text-sm font-medium text-[#0A0A0A] flex items-center gap-2 list-none select-none mt-4">
+                  <span className="group-open:rotate-90 transition-transform inline-block">▶</span>
+                  Attributs spécifiques
+                </summary>
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <div className="space-y-2"><Label>Matière</Label><Input value={form.material || ''} onChange={e => setForm({...form, material: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Dimensions</Label><Input value={form.dimensions || ''} onChange={e => setForm({...form, dimensions: e.target.value})} placeholder="100x50x200cm" /></div>
+                  <div className="space-y-2"><Label>Poids (kg)</Label><Input type="number" step="0.1" value={form.weight || ''} onChange={e => setForm({...form, weight: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Capacité</Label><Input value={form.capacity || ''} onChange={e => setForm({...form, capacity: e.target.value})} placeholder="50cl" /></div>
+                  <div className="space-y-2"><Label>Forme</Label><Input value={form.shape || ''} onChange={e => setForm({...form, shape: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Nb. pièces</Label><Input type="number" value={form.pieces || ''} onChange={e => setForm({...form, pieces: e.target.value})} /></div>
+                  <div className="flex items-center gap-2 mt-3">
+                    <input type="checkbox" checked={!!form.isFoldable} onChange={e => setForm({...form, isFoldable: e.target.checked})} className="h-4 w-4 rounded" />
+                    <Label>Pliable</Label>
+                  </div>
+                  <div />
+                  <div className="space-y-2"><Label>Espèce</Label><Input value={form.species || ''} onChange={e => setForm({...form, species: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Longueur tige (cm)</Label><Input type="number" step="0.1" value={form.stemLength || ''} onChange={e => setForm({...form, stemLength: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Forme arche</Label><Input value={form.archShape || ''} onChange={e => setForm({...form, archShape: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Assemblage (min)</Label><Input type="number" value={form.assemblyTime || ''} onChange={e => setForm({...form, assemblyTime: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Type bougie</Label><Input value={form.candleType || ''} onChange={e => setForm({...form, candleType: e.target.value})} /></div>
+                  <div className="space-y-2"><Label>Combustion (h)</Label><Input type="number" value={form.burnTime || ''} onChange={e => setForm({...form, burnTime: e.target.value})} /></div>
+                </div>
+              </details>
             </>
           ) : (
             <dl className="grid grid-cols-2 gap-4">
@@ -205,6 +243,10 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
               <div><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Emplacement</dt><dd className="text-sm text-[#0A0A0A]">{item.storageLocation || '—'}</dd></div>
               {item.description && <div className="col-span-2"><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Description</dt><dd className="text-sm text-[#0A0A0A]">{item.description}</dd></div>}
               {item.notes && <div className="col-span-2"><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Notes</dt><dd className="text-sm text-[#0A0A0A]">{item.notes}</dd></div>}
+              {(item as any).material && <div><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Matière</dt><dd className="text-sm text-[#0A0A0A]">{(item as any).material}</dd></div>}
+              {(item as any).dimensions && <div><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Dimensions</dt><dd className="text-sm text-[#0A0A0A]">{(item as any).dimensions}</dd></div>}
+              {(item as any).species && <div><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Espèce</dt><dd className="text-sm text-[#0A0A0A]">{(item as any).species}</dd></div>}
+              {(item as any).candleType && <div><dt className="text-xs text-[#C4B8A8] uppercase tracking-wide mb-1">Type bougie</dt><dd className="text-sm text-[#0A0A0A]">{(item as any).candleType}</dd></div>}
             </dl>
           )}
         </CardContent>

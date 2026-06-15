@@ -8,6 +8,10 @@ const pageTitles: Record<string, string> = {
   '/dashboard/events': 'Événements',
   '/dashboard/clients': 'Clients',
   '/dashboard/transporters': 'Transporteurs',
+  '/dashboard/suppliers': 'Fournisseurs',
+  '/dashboard/recipes': 'Compositions florales',
+  '/dashboard/templates': 'Templates',
+  '/dashboard/analytics': 'Analytiques',
   '/dashboard/calendar': 'Calendrier',
   '/dashboard/search': 'Recherche',
 }
