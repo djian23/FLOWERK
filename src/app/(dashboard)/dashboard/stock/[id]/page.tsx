@@ -21,7 +21,8 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [form, setForm] = useState<Record<string, string | boolean>>({})
+  const [isFoldable, setIsFoldable] = useState(false)
+  const [form, setForm] = useState<Record<string, string>>({})
 
   const load = useCallback(async () => {
     const [itemRes, catRes] = await Promise.all([
@@ -47,7 +48,6 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
       weight: itemData.weight ? String(itemData.weight) : '',
       capacity: itemData.capacity || '',
       shape: itemData.shape || '',
-      isFoldable: itemData.isFoldable || false,
       pieces: itemData.pieces ? String(itemData.pieces) : '',
       species: itemData.species || '',
       stemLength: itemData.stemLength ? String(itemData.stemLength) : '',
@@ -56,6 +56,7 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
       candleType: itemData.candleType || '',
       burnTime: itemData.burnTime ? String(itemData.burnTime) : '',
     })
+    setIsFoldable(itemData.isFoldable || false)
     setLoading(false)
   }, [params.id])
 
@@ -66,7 +67,7 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
     const res = await fetch(`/api/stock/${params.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify({ ...form, isFoldable })
     })
     if (res.ok) {
       await load()
@@ -220,7 +221,7 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
                   <div className="space-y-2"><Label>Forme</Label><Input value={form.shape || ''} onChange={e => setForm({...form, shape: e.target.value})} /></div>
                   <div className="space-y-2"><Label>Nb. pièces</Label><Input type="number" value={form.pieces || ''} onChange={e => setForm({...form, pieces: e.target.value})} /></div>
                   <div className="flex items-center gap-2 mt-3">
-                    <input type="checkbox" checked={!!form.isFoldable} onChange={e => setForm({...form, isFoldable: e.target.checked})} className="h-4 w-4 rounded" />
+                    <input type="checkbox" checked={isFoldable} onChange={e => setIsFoldable(e.target.checked)} className="h-4 w-4 rounded" />
                     <Label>Pliable</Label>
                   </div>
                   <div />
