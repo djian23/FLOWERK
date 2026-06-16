@@ -737,20 +737,25 @@ const CONTENT: Record<string, React.ReactNode> = {
 
 export default function GuidePage() {
   const [active, setActive] = useState('intro')
+  const [showContent, setShowContent] = useState(false)
 
   const groups = Array.from(new Set(SECTIONS.map(s => s.group).filter(Boolean))) as string[]
 
+  function navigate(id: string) {
+    setActive(id)
+    setShowContent(true)
+  }
+
   return (
     <div className="flex gap-0 -m-4 lg:-m-8 min-h-[calc(100vh-4rem)]">
-      {/* Guide sidebar */}
-      <aside className="w-52 lg:w-60 shrink-0 bg-[#EDE8D8] border-r border-[#C9BC98] overflow-y-auto">
+      {/* Guide sidebar — full width on mobile when not showing content, fixed width on desktop */}
+      <aside className={`${showContent ? 'hidden' : 'flex'} lg:flex flex-col w-full lg:w-60 shrink-0 bg-[#EDE8D8] border-r border-[#C9BC98] overflow-y-auto`}>
         <div className="p-4 border-b border-[#C9BC98]">
           <p className="text-xs font-semibold text-[#6B7A5E] uppercase tracking-widest">Guide d'utilisation</p>
         </div>
         <nav className="py-3 px-2">
-          {/* Intro */}
           <button
-            onClick={() => setActive('intro')}
+            onClick={() => navigate('intro')}
             className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors mb-1 ${
               active === 'intro' ? 'bg-[#7C8B6E] text-white font-medium' : 'text-[#3D4A2E] hover:bg-[#DDD5BE]'
             }`}
@@ -764,7 +769,7 @@ export default function GuidePage() {
               {SECTIONS.filter(s => s.group === group).map(s => (
                 <button
                   key={s.id}
-                  onClick={() => setActive(s.id)}
+                  onClick={() => navigate(s.id)}
                   className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors ${
                     active === s.id ? 'bg-[#7C8B6E] text-white font-medium' : 'text-[#3D4A2E] hover:bg-[#DDD5BE]'
                   } ${s.label.startsWith('↳') ? 'pl-5 text-xs' : ''}`}
@@ -777,8 +782,14 @@ export default function GuidePage() {
         </nav>
       </aside>
 
-      {/* Content */}
-      <main className="flex-1 overflow-y-auto bg-[#FAF7F2] p-6 lg:p-10">
+      {/* Content — full width on mobile when showing content, flex-1 on desktop */}
+      <main className={`${showContent ? 'flex' : 'hidden'} lg:flex flex-col flex-1 overflow-y-auto bg-[#FAF7F2] p-6 lg:p-10`}>
+        <button
+          onClick={() => setShowContent(false)}
+          className="lg:hidden mb-5 flex items-center gap-2 text-sm text-[#6B7A5E] hover:text-[#3D4A2E] transition-colors self-start"
+        >
+          ← Retour au menu
+        </button>
         <div className="max-w-3xl">
           {CONTENT[active] ?? (
             <div className="text-[#6B7A5E] text-sm">Section à venir...</div>
