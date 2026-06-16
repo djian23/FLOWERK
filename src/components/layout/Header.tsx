@@ -14,6 +14,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard/analytics': 'Analytiques',
   '/dashboard/calendar': 'Calendrier',
   '/dashboard/search': 'Recherche',
+  '/dashboard/guide': 'Guide d\'utilisation',
 }
 
 export function Header() {

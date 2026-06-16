@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2 } from 'lucide-react'
+import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const gestionItems = [
@@ -23,6 +23,7 @@ const vuesItems = [
   { href: '/dashboard/analytics', label: 'Analytiques', icon: BarChart2 },
   { href: '/dashboard/calendar', label: 'Calendrier', icon: Calendar },
   { href: '/dashboard/search', label: 'Recherche', icon: Search },
+  { href: '/dashboard/guide', label: 'Guide', icon: BookOpen },
 ]
 
 function NavItem({ item, pathname }: { item: { href: string; label: string; icon: any }; pathname: string }) {
