@@ -33,6 +33,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# expo
+.expo/
+/mobile/.expo/
+
 # uploads (user files)
 /public/uploads/*
 !/public/uploads/.gitkeep
