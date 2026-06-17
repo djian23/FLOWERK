@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ArrowLeft, Plus, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,6 +17,8 @@ export default function NewStockPage() {
   const [categories, setCategories] = useState<StockCategory[]>([])
   const [newCategory, setNewCategory] = useState('')
   const [addingCategory, setAddingCategory] = useState(false)
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
   const [form, setForm] = useState({
     name: '',
     categoryId: '',
@@ -63,6 +65,22 @@ export default function NewStockPage() {
     setAddingCategory(false)
   }
 
+  function handleAddPhotos(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || [])
+    setPhotoFiles(prev => [...prev, ...files])
+    files.forEach(file => {
+      const reader = new FileReader()
+      reader.onload = () => setPhotoPreviews(prev => [...prev, reader.result as string])
+      reader.readAsDataURL(file)
+    })
+    e.target.value = ''
+  }
+
+  function removePhoto(index: number) {
+    setPhotoFiles(prev => prev.filter((_, i) => i !== index))
+    setPhotoPreviews(prev => prev.filter((_, i) => i !== index))
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -74,6 +92,17 @@ export default function NewStockPage() {
       })
       const item = await res.json()
       if (res.ok) {
+        for (const file of photoFiles) {
+          const fd = new FormData()
+          fd.append('file', file)
+          const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
+          const { url } = await uploadRes.json()
+          await fetch(`/api/stock/${item.id}/photos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+          })
+        }
         router.push(`/dashboard/stock/${item.id}`)
       }
     } finally {
@@ -314,6 +343,25 @@ export default function NewStockPage() {
                     </div>
                   </div>
                 </details>
+              </div>
+            </div>
+
+            <div className="border-t border-[#E8E0D5] pt-4">
+              <Label>Photos</Label>
+              <div className="mt-2 flex flex-wrap gap-3">
+                {photoPreviews.map((src, i) => (
+                  <div key={i} className="relative w-24 h-24">
+                    <img src={src} alt="" className="w-full h-full object-cover rounded-md" />
+                    <button type="button" onClick={() => removePhoto(i)} className="absolute -top-2 -right-2 p-0.5 bg-white rounded-full shadow border border-[#E8E0D5]">
+                      <X className="h-3 w-3 text-red-500" />
+                    </button>
+                  </div>
+                ))}
+                <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-[#E8E0D5] rounded-md cursor-pointer hover:border-[#C4B8A8] transition-colors">
+                  <Upload className="h-5 w-5 text-[#C4B8A8]" />
+                  <span className="text-[10px] text-[#C4B8A8] mt-1">Ajouter</span>
+                  <input type="file" accept="image/*" multiple onChange={handleAddPhotos} className="hidden" />
+                </label>
               </div>
             </div>
 
