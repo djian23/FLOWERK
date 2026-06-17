@@ -5,7 +5,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   try {
     const recipe = await prisma.floralRecipe.findUnique({
       where: { id: params.id },
-      include: { ingredients: true },
+      include: { ingredients: true, photos: { orderBy: { createdAt: 'desc' } } },
     })
     if (!recipe) return NextResponse.json({ error: 'Non trouvé' }, { status: 404 })
     return NextResponse.json(recipe)

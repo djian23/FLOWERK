@@ -9,6 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         logistics: {
           include: { event: { include: { client: true } } },
         },
+        photos: { orderBy: { createdAt: 'desc' } },
         _count: { select: { logistics: true } },
       },
     })

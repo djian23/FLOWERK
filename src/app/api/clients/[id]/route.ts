@@ -10,6 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           orderBy: { date: 'desc' },
           include: { _count: { select: { reservations: true } } },
         },
+        photos: { orderBy: { createdAt: 'desc' } },
         _count: { select: { events: true } },
       },
     })

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Edit, Save, X, Trash2, Store } from 'lucide-react'
+import { ArrowLeft, Edit, Save, X, Trash2, Store, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +18,7 @@ export default function SupplierDetailPage() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [editForm, setEditForm] = useState({ name: '', phone: '', email: '', address: '', specialty: '', notes: '' })
 
   const fetchSupplier = useCallback(async () => {
@@ -56,6 +57,28 @@ export default function SupplierDetailPage() {
     if (!confirm('Supprimer ce fournisseur ?')) return
     await fetch(`/api/suppliers/${id}`, { method: 'DELETE' })
     router.push('/dashboard/suppliers')
+  }
+
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
+    const { url } = await uploadRes.json()
+    await fetch(`/api/suppliers/${id}/photos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    })
+    await fetchSupplier()
+    setUploading(false)
+  }
+
+  async function handleDeletePhoto(photoId: string) {
+    await fetch(`/api/suppliers/${id}/photos/${photoId}`, { method: 'DELETE' })
+    await fetchSupplier()
   }
 
   if (loading) return <div className="text-center py-12 text-[#C4B8A8]">Chargement...</div>
@@ -120,6 +143,34 @@ export default function SupplierDetailPage() {
                   {supplier.notes && <div><div className="text-xs text-[#C4B8A8]">Notes</div><div className="text-sm bg-[#E8E0D5]/30 rounded p-3 mt-1">{supplier.notes}</div></div>}
                   {!supplier.specialty && !supplier.phone && !supplier.email && !supplier.address && !supplier.notes && <p className="text-sm text-[#C4B8A8]">Aucune information supplémentaire</p>}
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border border-[#E8E0D5]">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Photos</CardTitle>
+              <label className="cursor-pointer">
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm border border-[#E8E0D5] rounded-md hover:bg-[#FAFAFA] transition-colors">
+                  <Upload className="h-4 w-4" /> {uploading ? 'Envoi...' : 'Ajouter'}
+                </span>
+              </label>
+            </CardHeader>
+            <CardContent>
+              {supplier.photos && supplier.photos.length > 0 ? (
+                <div className="grid grid-cols-3 gap-3">
+                  {supplier.photos.map((photo: any) => (
+                    <div key={photo.id} className="relative group">
+                      <img src={photo.url} alt="" className="w-full h-32 object-cover rounded-md" />
+                      <button onClick={() => handleDeletePhoto(photo.id)} className="absolute top-2 right-2 p-1 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Trash2 className="h-3 w-3 text-red-500" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#C4B8A8]">Aucune photo</p>
               )}
             </CardContent>
           </Card>

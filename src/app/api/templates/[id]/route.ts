@@ -5,7 +5,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   try {
     const template = await prisma.eventTemplate.findUnique({
       where: { id: params.id },
-      include: { checklist: { orderBy: { order: 'asc' } } },
+      include: { checklist: { orderBy: { order: 'asc' } }, photos: { orderBy: { createdAt: 'desc' } } },
     })
     if (!template) return NextResponse.json({ error: 'Non trouvé' }, { status: 404 })
     return NextResponse.json(template)

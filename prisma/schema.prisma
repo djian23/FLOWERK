@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Client {
-  id              String   @id @default(cuid())
+  id              String        @id @default(cuid())
   name            String
   email           String?
   phone           String?
@@ -20,10 +20,19 @@ model Client {
   avoidedColors   String?
   floralAllergies String?
   usualBudget     Float?
-  isVip           Boolean  @default(false)
+  isVip           Boolean       @default(false)
   events          Event[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  photos          ClientPhoto[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model ClientPhoto {
+  id        String   @id @default(cuid())
+  url       String
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model Event {
@@ -145,13 +154,22 @@ model Reservation {
 }
 
 model Transporter {
-  id        String      @id @default(cuid())
+  id        String             @id @default(cuid())
   name      String
   phone     String?
   email     String?
   notes     String?
   logistics Logistics[]
-  createdAt DateTime    @default(now())
+  photos    TransporterPhoto[]
+  createdAt DateTime           @default(now())
+}
+
+model TransporterPhoto {
+  id            String      @id @default(cuid())
+  url           String
+  transporterId String
+  transporter   Transporter @relation(fields: [transporterId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
 }
 
 model Logistics {
@@ -280,8 +298,17 @@ model Supplier {
   specialty    String?
   notes        String?
   freshFlowers FreshFlowerOrder[]
+  photos       SupplierPhoto[]
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
+}
+
+model SupplierPhoto {
+  id         String   @id @default(cuid())
+  url        String
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 }
 
 model FloralRecipe {
@@ -291,8 +318,17 @@ model FloralRecipe {
   prepTime      Int?
   estimatedCost Float?
   ingredients   FloralIngredient[]
+  photos        RecipePhoto[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
+}
+
+model RecipePhoto {
+  id        String       @id @default(cuid())
+  url       String
+  recipeId  String
+  recipe    FloralRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
 }
 
 model FloralIngredient {
@@ -312,8 +348,17 @@ model EventTemplate {
   style       String?
   description String?
   checklist   TemplateChecklistItem[]
+  photos      TemplatePhoto[]
   createdAt   DateTime                @default(now())
   updatedAt   DateTime                @updatedAt
+}
+
+model TemplatePhoto {
+  id         String        @id @default(cuid())
+  url        String
+  templateId String
+  template   EventTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  createdAt  DateTime      @default(now())
 }
 
 model TemplateChecklistItem {

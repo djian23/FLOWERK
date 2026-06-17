@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Edit, Save, X, Trash2, FileText, Plus, CheckSquare } from 'lucide-react'
+import { ArrowLeft, Edit, Save, X, Trash2, FileText, Plus, CheckSquare, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +18,7 @@ export default function TemplateDetailPage() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [editForm, setEditForm] = useState({ name: '', type: '', style: '', description: '' })
   const [editChecklist, setEditChecklist] = useState<any[]>([])
 
@@ -55,6 +56,28 @@ export default function TemplateDetailPage() {
     if (!confirm('Supprimer ce template ?')) return
     await fetch(`/api/templates/${id}`, { method: 'DELETE' })
     router.push('/dashboard/templates')
+  }
+
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
+    const { url } = await uploadRes.json()
+    await fetch(`/api/templates/${id}/photos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    })
+    await fetchTemplate()
+    setUploading(false)
+  }
+
+  async function handleDeletePhoto(photoId: string) {
+    await fetch(`/api/templates/${id}/photos/${photoId}`, { method: 'DELETE' })
+    await fetchTemplate()
   }
 
   if (loading) return <div className="text-center py-12 text-[#C4B8A8]">Chargement...</div>
@@ -141,6 +164,35 @@ export default function TemplateDetailPage() {
                     </div>
                   ))}
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Photos */}
+          <Card className="border border-[#E8E0D5]">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Photos</CardTitle>
+              <label className="cursor-pointer">
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm border border-[#E8E0D5] rounded-md hover:bg-[#FAFAFA] transition-colors">
+                  <Upload className="h-4 w-4" /> {uploading ? 'Envoi...' : 'Ajouter'}
+                </span>
+              </label>
+            </CardHeader>
+            <CardContent>
+              {template.photos && template.photos.length > 0 ? (
+                <div className="grid grid-cols-3 gap-3">
+                  {template.photos.map((photo: any) => (
+                    <div key={photo.id} className="relative group">
+                      <img src={photo.url} alt="" className="w-full h-32 object-cover rounded-md" />
+                      <button onClick={() => handleDeletePhoto(photo.id)} className="absolute top-2 right-2 p-1 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Trash2 className="h-3 w-3 text-red-500" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#C4B8A8]">Aucune photo</p>
               )}
             </CardContent>
           </Card>

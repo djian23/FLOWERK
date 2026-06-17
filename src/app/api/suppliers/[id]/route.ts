@@ -10,6 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           include: { event: true },
           orderBy: { createdAt: 'desc' },
         },
+        photos: { orderBy: { createdAt: 'desc' } },
         _count: { select: { freshFlowers: true } },
       },
     })
