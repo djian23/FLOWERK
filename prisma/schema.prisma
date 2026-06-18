@@ -82,6 +82,8 @@ model Event {
   timeline         EventTimeline[]
   quotes           Quote[]
   invoices         Invoice[]
+  venueId          String?
+  venue            Venue?   @relation(fields: [venueId], references: [id])
   moodboards       Moodboard[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -460,4 +462,32 @@ model Inspiration {
   tags        String?
   source      String?
   createdAt   DateTime @default(now())
+}
+
+model Venue {
+  id           String       @id @default(cuid())
+  name         String
+  address      String?
+  city         String?
+  type         String?
+  capacity     Int?
+  contactName  String?
+  contactPhone String?
+  contactEmail String?
+  notes        String?
+  photos       VenuePhoto[]
+  events       Event[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model VenuePhoto {
+  id        String   @id @default(cuid())
+  url       String
+  venueId   String
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  eventId   String?
+  eventName String?
+  caption   String?
+  createdAt DateTime @default(now())
 }

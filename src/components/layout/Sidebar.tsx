@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen, Palette, ClipboardList, Receipt, Sparkles } from 'lucide-react'
+import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen, Palette, ClipboardList, Receipt, Sparkles, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const gestionItems = [
@@ -14,6 +14,7 @@ const gestionItems = [
   { href: '/dashboard/clients', label: 'Clients', icon: Users },
   { href: '/dashboard/suppliers', label: 'Fournisseurs', icon: Store },
   { href: '/dashboard/transporters', label: 'Transporteurs', icon: Truck },
+  { href: '/dashboard/venues', label: 'Salles', icon: Building2 },
 ]
 
 const outilsItems = [

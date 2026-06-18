@@ -36,8 +36,10 @@ async function main() {
   await prisma.stockItem.deleteMany();
   await prisma.stockSubCategory.deleteMany();
   await prisma.stockCategory.deleteMany();
+  await prisma.venuePhoto.deleteMany();
   await prisma.clientPhoto.deleteMany();
   await prisma.event.deleteMany();
+  await prisma.venue.deleteMany();
   await prisma.client.deleteMany();
 
   console.log('All data deleted.');
@@ -611,6 +613,79 @@ async function main() {
   });
 
   console.log('Events created.');
+
+  // ============================================================
+  // 6b. VENUES
+  // ============================================================
+  const venueChateau = await prisma.venue.create({
+    data: {
+      name: 'Château de Vaux-le-Vicomte',
+      address: '77950 Maincy',
+      city: 'Maincy',
+      type: 'Château',
+      capacity: 300,
+      contactName: 'Marie Dupont',
+      contactPhone: '01 64 14 41 90',
+      notes: 'Magnifique château avec jardins à la française. Salle des gardes pour le dîner, orangerie pour le cocktail.',
+    },
+  });
+
+  const venueDomaine = await prisma.venue.create({
+    data: {
+      name: 'Domaine de la Butte Ronde',
+      address: '78120 Sonchamp',
+      city: 'Sonchamp',
+      type: 'Domaine',
+      capacity: 200,
+      contactName: 'Pierre Martin',
+      contactPhone: '01 34 85 12 00',
+      notes: 'Domaine champêtre avec granges rénovées. Idéal pour mariages bohèmes.',
+    },
+  });
+
+  const venueHotel = await prisma.venue.create({
+    data: {
+      name: 'Hôtel Le Meurice - Salon Pompadour',
+      address: '228 rue de Rivoli, 75001 Paris',
+      city: 'Paris',
+      type: 'Hôtel',
+      capacity: 150,
+      contactName: 'Jean-Luc Petit',
+      contactPhone: '01 44 58 10 10',
+      contactEmail: 'events@lemeurice.com',
+      notes: 'Salon Pompadour avec plafonds dorés. Très luxueux, prévoir compositions hautes.',
+    },
+  });
+
+  const venueJardin = await prisma.venue.create({
+    data: {
+      name: 'Jardin des Tuileries - Espace privé',
+      address: '113 rue de Rivoli, 75001 Paris',
+      city: 'Paris',
+      type: 'Jardin',
+      capacity: 100,
+      contactName: 'Sophie Leclerc',
+      contactPhone: '01 40 20 90 43',
+      notes: 'Espace privatisable dans les Tuileries. Extérieur uniquement, prévoir plan B pluie.',
+    },
+  });
+
+  await prisma.event.update({ where: { id: eventMariageDubois.id }, data: { venueId: venueChateau.id } });
+  await prisma.event.update({ where: { id: eventGalaLuxe.id }, data: { venueId: venueHotel.id } });
+  await prisma.event.update({ where: { id: eventMariageMartin.id }, data: { venueId: venueDomaine.id } });
+  await prisma.event.update({ where: { id: eventBabyShower.id }, data: { venueId: venueJardin.id } });
+
+  await prisma.venuePhoto.createMany({
+    data: [
+      { venueId: venueChateau.id, url: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800', eventName: 'Mariage Dubois', caption: 'Décoration table d\'honneur - Salle des gardes' },
+      { venueId: venueChateau.id, url: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800', eventName: 'Mariage Dubois', caption: 'Allée de cérémonie dans les jardins' },
+      { venueId: venueHotel.id, url: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=800', eventName: 'Gala Prestige', caption: 'Compositions hautes Salon Pompadour' },
+      { venueId: venueHotel.id, url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800', eventName: 'Gala Prestige', caption: 'Runner table principale' },
+      { venueId: venueDomaine.id, url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800', eventName: 'Mariage Martin', caption: 'Centres de table grange principale' },
+      { venueId: venueJardin.id, url: 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=800', eventName: 'Baby Shower Rousseau', caption: 'Déco candy bar extérieur' },
+    ],
+  });
+  console.log('Venues and venue photos created.');
 
   // ============================================================
   // 7. QUOTES with LINE ITEMS

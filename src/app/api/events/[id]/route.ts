@@ -7,6 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       where: { id: params.id },
       include: {
         client: true,
+        venue: true,
         reservations: {
           include: { stockItem: { include: { category: true, subCategory: true } } },
         },
@@ -77,8 +78,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         onSiteContactName: body.onSiteContactName !== undefined ? (body.onSiteContactName || null) : undefined,
         onSiteContactPhone: body.onSiteContactPhone !== undefined ? (body.onSiteContactPhone || null) : undefined,
         floorPlanUrl: body.floorPlanUrl !== undefined ? (body.floorPlanUrl || null) : undefined,
+        venueId: body.venueId !== undefined ? (body.venueId || null) : undefined,
       },
-      include: { client: true },
+      include: { client: true, venue: true },
     })
 
     // Auto timeline entry on status change

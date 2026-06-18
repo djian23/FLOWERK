@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Edit, Save, X, Plus, Trash2, Upload, FileText, Image, Film, Package,
-  Truck, DollarSign, Eye, Calendar, User, MapPin, Phone, Tag, ListChecks, Flower, History, Receipt, ClipboardList, Palette
+  Truck, DollarSign, Eye, Calendar, User, MapPin, Phone, Tag, ListChecks, Flower, History, Receipt, ClipboardList, Palette, Building2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,6 +45,7 @@ export default function EventDetailPage() {
   const [editing, setEditing] = useState(false)
   const [editForm, setEditForm] = useState<any>({})
   const [clients, setClients] = useState<any[]>([])
+  const [venues, setVenues] = useState<any[]>([])
   const [stockItems, setStockItems] = useState<StockItem[]>([])
   const [transporters, setTransporters] = useState<Transporter[]>([])
   const [uploading, setUploading] = useState(false)
@@ -87,6 +88,7 @@ export default function EventDetailPage() {
       photographerName: data.photographerName || '',
       onSiteContactName: data.onSiteContactName || '',
       onSiteContactPhone: data.onSiteContactPhone || '',
+      venueId: data.venueId || '',
     })
     setLoading(false)
   }, [id, router])
@@ -94,6 +96,7 @@ export default function EventDetailPage() {
   useEffect(() => {
     fetchEvent()
     fetch('/api/clients').then((r) => r.json()).then(d => setClients(Array.isArray(d) ? d : []))
+    fetch('/api/venues').then((r) => r.json()).then(d => setVenues(Array.isArray(d) ? d : []))
     fetch('/api/stock').then((r) => r.json()).then(d => setStockItems(Array.isArray(d) ? d : []))
     fetch('/api/transporters').then((r) => r.json()).then(d => setTransporters(Array.isArray(d) ? d : []))
   }, [fetchEvent])
@@ -391,6 +394,17 @@ export default function EventDetailPage() {
                     <Label>Adresse</Label>
                     <Input value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} className="mt-1" />
                   </div>
+                  <div>
+                    <Label>Salle / Lieu</Label>
+                    <select
+                      value={editForm.venueId}
+                      onChange={(e) => setEditForm({ ...editForm, venueId: e.target.value })}
+                      className="mt-1 w-full px-3 py-2 border border-[#E8E0D5] rounded-md text-sm bg-[#FAFAFA]"
+                    >
+                      <option value="">— Aucune salle —</option>
+                      {venues.map((v: any) => <option key={v.id} value={v.id}>{v.name}</option>)}
+                    </select>
+                  </div>
                   <div className="col-span-2">
                     <Label>Description</Label>
                     <Textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="mt-1" rows={4} />
@@ -533,6 +547,17 @@ export default function EventDetailPage() {
                       <div>
                         <div className="text-xs text-[#C4B8A8]">Adresse</div>
                         <div className="text-sm">{event.address}</div>
+                      </div>
+                    </div>
+                  )}
+                  {(event as any).venue && (
+                    <div className="flex items-start gap-2">
+                      <Building2 className="h-4 w-4 text-[#C4B8A8] mt-0.5" />
+                      <div>
+                        <div className="text-xs text-[#C4B8A8]">Salle / Lieu</div>
+                        <Link href={`/dashboard/venues/${(event as any).venue.id}`} className="text-sm font-medium text-[#0A0A0A] hover:underline">
+                          {(event as any).venue.name}
+                        </Link>
                       </div>
                     </div>
                   )}
