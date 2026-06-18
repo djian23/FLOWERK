@@ -451,3 +451,13 @@ model MoodboardItem {
   order       Int       @default(0)
   createdAt   DateTime  @default(now())
 }
+
+model Inspiration {
+  id          String   @id @default(cuid())
+  url         String
+  title       String?
+  description String?
+  tags        String?
+  source      String?
+  createdAt   DateTime @default(now())
+}

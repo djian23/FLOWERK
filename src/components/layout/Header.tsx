@@ -20,6 +20,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard/moodboards': 'Moodboards',
   '/dashboard/quotes': 'Devis',
   '/dashboard/invoices': 'Factures',
+  '/dashboard/inspirations': 'Inspirations',
 }
 
 const FONT_SCALES = [1, 1.15, 1.3, 1.45]

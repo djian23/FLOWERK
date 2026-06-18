@@ -6,6 +6,7 @@ async function main() {
   // ============================================================
   // 1. DELETE ALL DATA in reverse dependency order
   // ============================================================
+  await prisma.inspiration.deleteMany();
   await prisma.moodboardItem.deleteMany();
   await prisma.moodboard.deleteMany();
   await prisma.eventTimeline.deleteMany();
@@ -1151,6 +1152,23 @@ async function main() {
   });
 
   console.log('Moodboards created.');
+
+  // ============================================================
+  // INSPIRATIONS
+  // ============================================================
+  await prisma.inspiration.createMany({
+    data: [
+      { url: 'https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800', title: 'Arche florale asymétrique', description: 'Belle arche avec roses garden et feuillages retombants', tags: 'arche,mariage,roses,asymétrique', source: 'Pinterest' },
+      { url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800', title: 'Centre de table bas rond', description: 'Composition basse avec pivoines et eucalyptus dans vase doré', tags: 'centre de table,pivoines,eucalyptus,doré', source: 'Instagram @flowerstudio' },
+      { url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800', title: 'Runner végétal luxe', description: 'Chemin de table en verdure avec bougies et touches dorées', tags: 'runner,verdure,luxe,bougies,doré', source: 'Magazine Mariée' },
+      { url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800', title: 'Suspension florale plafond', description: 'Installation suspendue avec wisteria et roses blanches', tags: 'suspension,plafond,wisteria,blanc', source: 'Pinterest' },
+      { url: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800', title: 'Allée de cérémonie lavande', description: 'Petits bouquets de lavande le long des chaises', tags: 'cérémonie,lavande,allée,champêtre', source: 'Blog mariage' },
+      { url: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=800', title: 'Bouquet cascade moderne', description: 'Bouquet de mariée cascade avec orchidées et verdure', tags: 'bouquet,cascade,orchidées,moderne', source: 'Instagram @bridalflowers' },
+      { url: 'https://images.unsplash.com/photo-1550005809-91ad75fb315f?w=800', title: 'Urne d\'entrée majestueuse', description: 'Grande composition dans urne en pierre à l\'entrée du château', tags: 'urne,entrée,grand format,château', source: 'Salon du mariage' },
+      { url: 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=800', title: 'Décoration candy bar', description: 'Petits arrangements floraux autour du bar à bonbons', tags: 'candy bar,mignon,pastel,baby shower', source: 'Pinterest' },
+    ],
+  });
+  console.log('Inspirations created.');
 
   // ============================================================
   // DONE
