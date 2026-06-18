@@ -22,8 +22,13 @@ const SECTIONS = [
   { id: 'clients', label: 'Clients', group: 'Gestion' },
   { id: 'suppliers', label: 'Fournisseurs', group: 'Gestion' },
   { id: 'transporters', label: 'Transporteurs', group: 'Gestion' },
+  { id: 'quotes', label: 'Devis', group: 'Gestion' },
+  { id: 'invoices', label: 'Factures', group: 'Gestion' },
   { id: 'recipes', label: 'Compositions florales', group: 'Outils' },
   { id: 'templates', label: 'Templates', group: 'Outils' },
+  { id: 'moodboards', label: 'Moodboards', group: 'Outils' },
+  { id: 'photos', label: 'Photos', group: 'Outils' },
+  { id: 'accessibility', label: 'Accessibilité / Zoom', group: 'Outils' },
 ]
 
 const STATUS_LIST = [
@@ -124,9 +129,9 @@ const CONTENT: Record<string, React.ReactNode> = {
         <p>La navigation se fait via la barre noire à gauche. Elle est divisée en 3 groupes :</p>
         <div className="space-y-2 mt-3">
           {[
-            ['Gestion', 'Le cœur opérationnel : Événements, Stock, Clients, Fournisseurs, Transporteurs'],
-            ['Outils', 'Les ressources réutilisables : Compositions florales, Templates d\'événements'],
-            ['Vues', 'La vision globale : Analytiques, Calendrier, Recherche'],
+            ['Gestion', 'Le cœur opérationnel : Événements, Devis, Factures, Stock, Clients, Fournisseurs, Transporteurs'],
+            ['Outils', 'Les ressources : Compositions florales, Templates, Moodboards, Photos'],
+            ['Vues', 'La vision globale : Analytiques, Calendrier, Recherche, Guide'],
           ].map(([g, d]) => (
             <div key={g} className="flex gap-3 items-start">
               <span className="w-28 shrink-0 font-semibold text-[#6B7A5E] text-sm">{g}</span>
@@ -731,6 +736,183 @@ const CONTENT: Record<string, React.ReactNode> = {
         </ul>
       </SubSection>
       <InfoBox>Les templates ne créent pas automatiquement des événements. Tu les consultes et t'en inspires manuellement. Une prochaine version pourrait permettre de "dupliquer" un template en événement.</InfoBox>
+    </Section>
+  ),
+
+  quotes: (
+    <Section title="Devis" icon="📝">
+      <p>Gestion complète des devis pour tes prestations. Chaque devis est lié à un événement et peut être converti en facture.</p>
+      <SubSection title="Accès">
+        <p>Tu peux accéder aux devis de 2 façons :</p>
+        <ul className="list-disc list-inside space-y-1 text-sm mt-2">
+          <li><strong>Sidebar → Devis</strong> : vue globale de tous les devis, tous événements confondus</li>
+          <li><strong>Page événement → onglet Devis</strong> : devis spécifiques à cet événement</li>
+        </ul>
+      </SubSection>
+      <SubSection title="Créer un devis">
+        <p>Depuis la page d&apos;un événement, va dans l&apos;onglet <strong>Devis</strong> → <strong>Gérer les devis</strong> → <strong>Nouveau devis</strong>.</p>
+        <div className="space-y-1 mt-2">
+          {[
+            ['Lignes de prestation', 'Ajoute chaque prestation avec description, quantité et prix unitaire.'],
+            ['Validité', 'Date limite de validité du devis (ex : 30 jours).'],
+            ['Conditions', 'Conditions générales (acompte 30%, solde J-7, etc.).'],
+            ['Notes', 'Notes internes ou mention spéciale pour le client.'],
+          ].map(([n, d]) => <Field key={n} name={n} desc={d} />)}
+        </div>
+      </SubSection>
+      <SubSection title="Numérotation automatique">
+        <p>Chaque devis reçoit un numéro unique au format <strong>D000001, D000002...</strong> attribué automatiquement. Tu n&apos;as rien à faire.</p>
+      </SubSection>
+      <SubSection title="Statuts du devis">
+        {[
+          ['Brouillon', 'En cours de rédaction, pas encore envoyé.'],
+          ['Envoyé', 'Tu l\'as transmis au client.'],
+          ['Accepté', 'Le client a validé — tu peux générer la facture.'],
+          ['Refusé', 'Le client a décliné cette proposition.'],
+          ['Expiré', 'La date de validité est dépassée.'],
+        ].map(([n, d]) => <Field key={n} name={n} desc={d} />)}
+      </SubSection>
+      <SubSection title="Télécharger en PDF">
+        <p>Clique sur <strong>Télécharger PDF</strong> sur la page de détail du devis. Le PDF inclut ton logo, tes coordonnées, le détail des prestations et le total.</p>
+      </SubSection>
+      <SubSection title="Convertir en facture">
+        <p>Quand le devis est accepté, clique sur <strong>Générer la facture</strong>. Les informations du client sont copiées automatiquement dans la facture (snapshot).</p>
+      </SubSection>
+      <TipBox>Remplis bien les conditions de paiement (acompte, délai) dans chaque devis. Elles apparaissent sur le PDF et servent de preuve en cas de litige.</TipBox>
+    </Section>
+  ),
+
+  invoices: (
+    <Section title="Factures" icon="🧾">
+      <p>Gestion des factures avec toutes les mentions légales obligatoires pour une micro-entreprise.</p>
+      <SubSection title="Accès">
+        <p>Comme les devis, tu y accèdes via la <strong>sidebar → Factures</strong> ou depuis un événement → onglet <strong>Factures</strong>.</p>
+      </SubSection>
+      <SubSection title="Créer une facture">
+        <p>Les factures se créent <strong>à partir d&apos;un devis accepté</strong>. Depuis le détail du devis, clique sur "Générer la facture".</p>
+        <p className="mt-2">L&apos;app copie automatiquement :</p>
+        <ul className="list-disc list-inside space-y-1 text-sm mt-1">
+          <li>Le nom, adresse, email, téléphone du client (snapshot figé)</li>
+          <li>Toutes les lignes de prestation du devis</li>
+          <li>Le montant total HT</li>
+          <li>La date d&apos;échéance (30 jours par défaut)</li>
+        </ul>
+      </SubSection>
+      <SubSection title="Numérotation">
+        <p>Format automatique : <strong>F000001, F000002...</strong> — numérotation séquentielle continue, conforme aux obligations légales.</p>
+      </SubSection>
+      <SubSection title="Statuts de la facture">
+        {[
+          ['Brouillon', 'Pas encore émise.'],
+          ['Émise', 'Envoyée au client.'],
+          ['Payée', 'Paiement reçu (la date de paiement est enregistrée automatiquement).'],
+          ['En retard', 'Échéance dépassée, paiement non reçu.'],
+          ['Annulée', 'Facture annulée (avoir à émettre si besoin).'],
+        ].map(([n, d]) => <Field key={n} name={n} desc={d} />)}
+      </SubSection>
+      <SubSection title="Mentions légales sur le PDF">
+        <InfoBox>
+          Chaque facture PDF inclut automatiquement :<br /><br />
+          <strong>Flower K</strong> — 127, avenue de Gravelle, 94410 Saint-Maurice<br />
+          <strong>SIRET :</strong> 993 329 259 00010<br />
+          <strong>Mention TVA :</strong> "TVA non applicable, art. 293B du CGI"<br /><br />
+          Ces informations sont obligatoires pour une micro-entreprise.
+        </InfoBox>
+      </SubSection>
+      <SubSection title="Télécharger en PDF">
+        <p>Depuis la page de détail de la facture ou depuis la liste globale (icône de téléchargement), tu peux générer et télécharger le PDF complet.</p>
+      </SubSection>
+    </Section>
+  ),
+
+  moodboards: (
+    <Section title="Moodboards" icon="🎨">
+      <p>Outil de présentation visuelle pour tes rendez-vous clients. Crée des planches d&apos;inspiration avec photos et descriptions pour illustrer ta proposition.</p>
+      <SubSection title="Accès">
+        <p>Tu peux accéder aux moodboards de 2 façons :</p>
+        <ul className="list-disc list-inside space-y-1 text-sm mt-2">
+          <li><strong>Sidebar → Moodboards</strong> : vue de tous tes moodboards</li>
+          <li><strong>Page événement → onglet Moodboard</strong> : moodboards de cet événement</li>
+        </ul>
+      </SubSection>
+      <SubSection title="Créer un moodboard">
+        <p>Depuis un événement → <strong>Moodboard</strong> → <strong>Gérer les moodboards</strong> → <strong>Nouveau moodboard</strong>.</p>
+        <p className="mt-2">Le titre est pré-rempli avec le nom du client. Ajoute des notes sur le style ou les inspirations.</p>
+      </SubSection>
+      <SubSection title="Ajouter des photos">
+        <p>Sur la page d&apos;édition du moodboard, clique sur la zone d&apos;upload pour ajouter des photos (plusieurs à la fois possible). Pour chaque photo, tu peux renseigner :</p>
+        <div className="space-y-1 mt-2">
+          {[
+            ['Titre', 'Ex: "Centre de table champêtre", "Arche de cérémonie"...'],
+            ['Description', 'Détails sur la composition, les fleurs utilisées, l\'ambiance recherchée.'],
+          ].map(([n, d]) => <Field key={n} name={n} desc={d} />)}
+        </div>
+      </SubSection>
+      <SubSection title="Mode Présentation">
+        <p>Clique sur <strong>Présenter</strong> pour afficher le moodboard dans un format élégant, adapté pour montrer à un client en rendez-vous :</p>
+        <ul className="list-disc list-inside space-y-1 text-sm mt-1">
+          <li>Header avec logo Flower K, nom du client, date de l&apos;événement</li>
+          <li>Photos en grand format avec titres et descriptions</li>
+          <li>Footer avec tes coordonnées</li>
+        </ul>
+      </SubSection>
+      <SubSection title="Export PDF">
+        <p>Depuis le mode présentation, clique sur <strong>PDF</strong> pour télécharger le moodboard complet. Le PDF contient une page de couverture + une page par photo. Idéal à envoyer par email au client.</p>
+      </SubSection>
+      <SubSection title="Impression">
+        <p>Le bouton <strong>Imprimer</strong> lance l&apos;impression du navigateur avec les éléments de navigation masqués. La mise en page est optimisée pour le papier.</p>
+      </SubSection>
+      <TipBox>Prépare le moodboard avant le rendez-vous client, ouvre-le en mode Présentation sur ta tablette ou ton ordi, et parcourez-le ensemble. Plus impactant qu&apos;un PowerPoint !</TipBox>
+    </Section>
+  ),
+
+  photos: (
+    <Section title="Photos" icon="📸">
+      <p>Tu peux ajouter des photos partout dans l&apos;app : stock, clients, fournisseurs, transporteurs, compositions, templates.</p>
+      <SubSection title="Où ajouter des photos">
+        <div className="space-y-1">
+          {[
+            ['Stock', 'Sur la page de création ET de détail de chaque article. Prends une photo de chaque vase, arche, bougie...'],
+            ['Clients', 'Photos de référence, captures de conversations, inspirations envoyées par le client.'],
+            ['Fournisseurs', 'Photos des produits, des étals au marché, des catalogues.'],
+            ['Transporteurs', 'Photos des véhicules, de l\'espace de chargement.'],
+            ['Compositions', 'Le résultat final de ta composition. Sert de référence pour les prochaines fois.'],
+            ['Templates', 'Photos d\'exemple du type d\'événement (mariage champêtre, gala...).'],
+          ].map(([n, d]) => <Field key={n} name={n} desc={d} />)}
+        </div>
+      </SubSection>
+      <SubSection title="Comment ça marche">
+        <p>Sur chaque page de détail, tu trouves une section <strong>Photos</strong> avec un bouton d&apos;upload. Sélectionne une ou plusieurs photos, elles s&apos;uploadent automatiquement.</p>
+        <p className="mt-2">Tu peux aussi ajouter des photos <strong>dès la création</strong> d&apos;un article (stock, client, etc.) — les photos sont uploadées après la création de la fiche.</p>
+      </SubSection>
+      <SubSection title="Supprimer une photo">
+        <p>Chaque photo a un bouton <strong>X</strong> en survol pour la supprimer. La suppression est immédiate et irréversible.</p>
+      </SubSection>
+      <TipBox>Prends l&apos;habitude de photographier chaque nouvel article de stock à sa réception. Ça facilite l&apos;identification et la présentation aux clients.</TipBox>
+    </Section>
+  ),
+
+  accessibility: (
+    <Section title="Accessibilité / Zoom" icon="🔍">
+      <p>L&apos;app est conçue avec des polices plus grandes et plus grasses pour une meilleure lisibilité.</p>
+      <SubSection title="Contrôle de la taille">
+        <p>En haut à droite de chaque page, tu trouves les boutons <strong>−</strong> et <strong>+</strong> pour ajuster la taille de la police :</p>
+        <div className="space-y-1 mt-2">
+          {[
+            ['Normal (1×)', 'Taille par défaut, adaptée aux écrans standards.'],
+            ['Grand (1.15×)', 'Légèrement plus grand, confortable pour une lecture prolongée.'],
+            ['Très grand (1.3×)', 'Idéal si tu as des difficultés de vue.'],
+            ['Maximum (1.45×)', 'Le plus grand possible. Tout le texte est bien visible.'],
+          ].map(([n, d]) => <Field key={n} name={n} desc={d} />)}
+        </div>
+      </SubSection>
+      <SubSection title="Sauvegarde automatique">
+        <p>Ton choix de taille est <strong>sauvegardé automatiquement</strong> dans ton navigateur. Quand tu reviens sur l&apos;app, ta préférence est restaurée. Pas besoin de régler à chaque fois.</p>
+      </SubSection>
+      <SubSection title="Texte en gras">
+        <p>Tous les textes importants (boutons, labels, titres, badges) sont en gras par défaut pour une meilleure lisibilité. Les éléments actifs dans la navigation sont encore plus marqués.</p>
+      </SubSection>
+      <InfoBox>Le zoom s&apos;applique à TOUTE l&apos;application : textes, boutons, formulaires. C&apos;est un vrai zoom, pas juste une police plus grosse.</InfoBox>
     </Section>
   ),
 }
