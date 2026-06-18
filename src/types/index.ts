@@ -214,3 +214,24 @@ export interface Invoice {
   createdAt: string
   updatedAt: string
 }
+
+export interface MoodboardItem {
+  id: string
+  moodboardId: string
+  url: string
+  title?: string | null
+  description?: string | null
+  order: number
+  createdAt: string
+}
+
+export interface Moodboard {
+  id: string
+  eventId: string
+  event?: Event
+  title: string
+  notes?: string | null
+  items?: MoodboardItem[]
+  createdAt: string
+  updatedAt: string
+}

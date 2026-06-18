@@ -20,8 +20,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         timeline: { orderBy: { createdAt: 'desc' } },
         quotes: { include: { lines: { orderBy: { order: 'asc' } }, invoice: true }, orderBy: { createdAt: 'desc' } },
         invoices: { include: { quote: true }, orderBy: { createdAt: 'desc' } },
+        moodboards: { include: { items: { orderBy: { order: 'asc' } } }, orderBy: { createdAt: 'desc' } },
         _count: {
-          select: { reservations: true, documents: true, previews: true, gallery: true, checklist: true, freshFlowers: true, quotes: true, invoices: true },
+          select: { reservations: true, documents: true, previews: true, gallery: true, checklist: true, freshFlowers: true, quotes: true, invoices: true, moodboards: true },
         },
       },
     })

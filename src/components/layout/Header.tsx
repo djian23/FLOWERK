@@ -17,6 +17,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard/calendar': 'Calendrier',
   '/dashboard/search': 'Recherche',
   '/dashboard/guide': 'Guide d\'utilisation',
+  '/dashboard/moodboards': 'Moodboards',
 }
 
 const FONT_SCALES = [1, 1.15, 1.3, 1.45]

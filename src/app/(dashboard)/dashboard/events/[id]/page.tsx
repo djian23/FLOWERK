@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, Edit, Save, X, Plus, Trash2, Upload, FileText, Image, Film, Package,
-  Truck, DollarSign, Eye, Calendar, User, MapPin, Phone, Tag, ListChecks, Flower, History, Receipt, ClipboardList
+  Truck, DollarSign, Eye, Calendar, User, MapPin, Phone, Tag, ListChecks, Flower, History, Receipt, ClipboardList, Palette
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -335,6 +335,7 @@ export default function EventDetailPage() {
           <TabsTrigger value="previews">Previews ({event.previews?.length || 0})</TabsTrigger>
           <TabsTrigger value="gallery">Galerie ({event.gallery?.length || 0})</TabsTrigger>
           <TabsTrigger value="documents">Documents ({event.documents?.length || 0})</TabsTrigger>
+          <TabsTrigger value="moodboard">Moodboard ({(event as any).moodboards?.length || 0})</TabsTrigger>
           <TabsTrigger value="devis">Devis ({(event as any).quotes?.length || 0})</TabsTrigger>
           <TabsTrigger value="factures">Factures ({(event as any).invoices?.length || 0})</TabsTrigger>
           <TabsTrigger value="finance">Finance</TabsTrigger>
@@ -910,6 +911,21 @@ export default function EventDetailPage() {
                 )}
               </CardContent>
             </Card>
+          </div>
+        </TabsContent>
+
+        {/* MOODBOARD TAB */}
+        <TabsContent value="moodboard">
+          <div className="text-center py-8">
+            <Link href={`/dashboard/events/${id}/moodboards`}>
+              <Button className="bg-[#0A0A0A] text-white gap-2">
+                <Palette className="h-4 w-4" />
+                Gérer les moodboards
+              </Button>
+            </Link>
+            <p className="text-sm text-[#C4B8A8] mt-2">
+              {(event as any).moodboards?.length || 0} moodboard(s)
+            </p>
           </div>
         </TabsContent>
 

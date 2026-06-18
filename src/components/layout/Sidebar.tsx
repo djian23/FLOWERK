@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen } from 'lucide-react'
+import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen, Palette } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const gestionItems = [
@@ -17,6 +17,7 @@ const gestionItems = [
 const outilsItems = [
   { href: '/dashboard/recipes', label: 'Compositions', icon: Flower2 },
   { href: '/dashboard/templates', label: 'Templates', icon: FileText },
+  { href: '/dashboard/moodboards', label: 'Moodboards', icon: Palette },
 ]
 
 const vuesItems = [

@@ -46,3 +46,16 @@
     scrollbar-width: thin;
   }
 }
+
+@media print {
+  nav, aside, header, .print\\:hidden {
+    display: none !important;
+  }
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body {
+    background: white !important;
+  }
+}

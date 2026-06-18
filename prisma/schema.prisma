@@ -82,6 +82,7 @@ model Event {
   timeline         EventTimeline[]
   quotes           Quote[]
   invoices         Invoice[]
+  moodboards       Moodboard[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -427,4 +428,26 @@ model Invoice {
   paidDate       DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+model Moodboard {
+  id        String          @id @default(cuid())
+  eventId   String
+  event     Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  title     String
+  notes     String?
+  items     MoodboardItem[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model MoodboardItem {
+  id          String    @id @default(cuid())
+  moodboardId String
+  moodboard   Moodboard @relation(fields: [moodboardId], references: [id], onDelete: Cascade)
+  url         String
+  title       String?
+  description String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
 }
