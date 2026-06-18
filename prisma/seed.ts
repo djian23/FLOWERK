@@ -6,6 +6,8 @@ async function main() {
   // ============================================================
   // 1. DELETE ALL DATA in reverse dependency order
   // ============================================================
+  await prisma.moodboardItem.deleteMany();
+  await prisma.moodboard.deleteMany();
   await prisma.eventTimeline.deleteMany();
   await prisma.quoteLine.deleteMany();
   await prisma.invoice.deleteMany();
@@ -1096,6 +1098,59 @@ async function main() {
   });
 
   console.log('Fresh flower orders created.');
+
+  // ============================================================
+  // 11. MOODBOARDS
+  // ============================================================
+  const moodboard1 = await prisma.moodboard.create({
+    data: {
+      eventId: eventMariageDubois.id,
+      title: 'Moodboard — Mariage Dubois',
+      notes: 'Ambiance champêtre et romantique, tons pastel avec touches de vert eucalyptus. Inspiration jardins anglais.',
+    },
+  });
+
+  await prisma.moodboardItem.createMany({
+    data: [
+      { moodboardId: moodboard1.id, url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800', title: 'Centre de table champêtre', description: 'Bouquet rond avec pivoines roses et eucalyptus dans un vase en laiton doré', order: 0 },
+      { moodboardId: moodboard1.id, url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800', title: 'Arche de cérémonie', description: 'Arche en bois flotté habillée de roses blanches et feuillages retombants', order: 1 },
+      { moodboardId: moodboard1.id, url: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800', title: 'Décoration allée', description: 'Petits bouquets de lavande et gypsophile le long de l\'allée de cérémonie', order: 2 },
+      { moodboardId: moodboard1.id, url: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=800', title: 'Bouquet de mariée', description: 'Bouquet cascade avec roses David Austin, pivoines et renoncules', order: 3 },
+    ],
+  });
+
+  const moodboard2 = await prisma.moodboard.create({
+    data: {
+      eventId: eventGalaLuxe.id,
+      title: 'Moodboard — Gala Prestige',
+      notes: 'Ambiance luxueuse et élégante. Palette or, blanc et vert profond. Grande hauteur pour les compositions.',
+    },
+  });
+
+  await prisma.moodboardItem.createMany({
+    data: [
+      { moodboardId: moodboard2.id, url: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=800', title: 'Composition haute', description: 'Grand vase en cristal avec orchidées blanches et branches de saule', order: 0 },
+      { moodboardId: moodboard2.id, url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800', title: 'Table d\'honneur', description: 'Runner de verdure luxuriante avec bougies dorées et roses blanches', order: 1 },
+      { moodboardId: moodboard2.id, url: 'https://images.unsplash.com/photo-1550005809-91ad75fb315f?w=800', title: 'Entrée de salle', description: 'Grande urne fleurie avec hortensias blancs et lys à l\'entrée', order: 2 },
+    ],
+  });
+
+  const moodboard3 = await prisma.moodboard.create({
+    data: {
+      eventId: eventBabyShower.id,
+      title: 'Moodboard — Baby Shower Rousseau',
+      notes: 'Doux et féminin, tons rose poudré et crème. Ambiance cosy et chaleureuse.',
+    },
+  });
+
+  await prisma.moodboardItem.createMany({
+    data: [
+      { moodboardId: moodboard3.id, url: 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=800', title: 'Table sucrée', description: 'Petits bouquets roses et blancs autour du candy bar', order: 0 },
+      { moodboardId: moodboard3.id, url: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=800', title: 'Guirlande florale', description: 'Guirlande de roses miniatures et gypsophile pour la décoration murale', order: 1 },
+    ],
+  });
+
+  console.log('Moodboards created.');
 
   // ============================================================
   // DONE
