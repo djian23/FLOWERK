@@ -35,9 +35,9 @@ function NavItem({ item, pathname }: { item: { href: string; label: string; icon
       <Link
         href={item.href}
         className={cn(
-          'flex items-center gap-3 px-2 lg:px-3 py-2.5 rounded-md text-sm transition-colors',
+          'flex items-center gap-3 px-2 lg:px-3 py-2.5 rounded-md text-base font-semibold transition-colors',
           isActive
-            ? 'bg-[#E8E0D5] text-[#0A0A0A] font-medium'
+            ? 'bg-[#E8E0D5] text-[#0A0A0A] font-bold'
             : 'text-white/70 hover:text-white hover:bg-white/10'
         )}
         title={item.label}
@@ -72,9 +72,9 @@ export function Sidebar() {
             <Link
               href="/dashboard"
               className={cn(
-                'flex items-center gap-3 px-2 lg:px-3 py-2.5 rounded-md text-sm transition-colors',
+                'flex items-center gap-3 px-2 lg:px-3 py-2.5 rounded-md text-base font-semibold transition-colors',
                 pathname === '/dashboard'
-                  ? 'bg-[#E8E0D5] text-[#0A0A0A] font-medium'
+                  ? 'bg-[#E8E0D5] text-[#0A0A0A] font-bold'
                   : 'text-white/70 hover:text-white hover:bg-white/10'
               )}
               title="Tableau de bord"
@@ -86,7 +86,7 @@ export function Sidebar() {
 
           {/* Gestion section */}
           <li className="hidden lg:block pt-3 pb-1">
-            <span className="px-3 text-[10px] text-white/30 uppercase tracking-wider">Gestion</span>
+            <span className="px-3 text-xs text-white/30 uppercase tracking-wider">Gestion</span>
           </li>
           {gestionItems.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} />
@@ -94,7 +94,7 @@ export function Sidebar() {
 
           {/* Outils section */}
           <li className="hidden lg:block pt-3 pb-1">
-            <span className="px-3 text-[10px] text-white/30 uppercase tracking-wider">Outils</span>
+            <span className="px-3 text-xs text-white/30 uppercase tracking-wider">Outils</span>
           </li>
           {outilsItems.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} />
@@ -102,7 +102,7 @@ export function Sidebar() {
 
           {/* Vues section */}
           <li className="hidden lg:block pt-3 pb-1">
-            <span className="px-3 text-[10px] text-white/30 uppercase tracking-wider">Vues</span>
+            <span className="px-3 text-xs text-white/30 uppercase tracking-wider">Vues</span>
           </li>
           {vuesItems.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} />
