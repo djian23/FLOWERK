@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen, Palette } from 'lucide-react'
+import { LayoutDashboard, Package, Calendar, Users, Truck, Search, Folder, Store, FileText, BarChart2, Flower2, BookOpen, Palette, ClipboardList, Receipt } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const gestionItems = [
   { href: '/dashboard/events', label: 'Événements', icon: Folder },
+  { href: '/dashboard/quotes', label: 'Devis', icon: ClipboardList },
+  { href: '/dashboard/invoices', label: 'Factures', icon: Receipt },
   { href: '/dashboard/stock', label: 'Stock', icon: Package },
   { href: '/dashboard/clients', label: 'Clients', icon: Users },
   { href: '/dashboard/suppliers', label: 'Fournisseurs', icon: Store },
