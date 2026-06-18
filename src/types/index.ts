@@ -167,3 +167,50 @@ export interface EventCost {
   createdAt: string
   updatedAt: string
 }
+
+export interface QuoteLine {
+  id: string
+  quoteId: string
+  prestation: string
+  description?: string | null
+  quantity: number
+  unitPrice: number
+  order: number
+}
+
+export interface Quote {
+  id: string
+  eventId: string
+  event?: Event
+  quoteNumber: string
+  status: string
+  validUntil?: string | null
+  conditions?: string | null
+  notes?: string | null
+  totalHT: number
+  lines?: QuoteLine[]
+  invoice?: Invoice | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Invoice {
+  id: string
+  quoteId?: string | null
+  quote?: Quote | null
+  eventId: string
+  event?: Event
+  invoiceNumber: string
+  status: string
+  clientName: string
+  clientAddress?: string | null
+  clientEmail?: string | null
+  clientPhone?: string | null
+  totalHT: number
+  notes?: string | null
+  issuedDate: string
+  dueDate?: string | null
+  paidDate?: string | null
+  createdAt: string
+  updatedAt: string
+}

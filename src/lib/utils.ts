@@ -72,6 +72,38 @@ export const MEDIA_TYPES: Record<string, string> = {
   AVANT_APRES: 'Avant/Après',
 }
 
+export const QUOTE_STATUSES: Record<string, string> = {
+  BROUILLON: 'Brouillon',
+  ENVOYE: 'Envoyé',
+  ACCEPTE: 'Accepté',
+  REFUSE: 'Refusé',
+  EXPIRE: 'Expiré',
+}
+
+export const QUOTE_STATUS_COLORS: Record<string, string> = {
+  BROUILLON: 'bg-gray-100 text-gray-800',
+  ENVOYE: 'bg-blue-100 text-blue-800',
+  ACCEPTE: 'bg-green-100 text-green-800',
+  REFUSE: 'bg-red-100 text-red-800',
+  EXPIRE: 'bg-orange-100 text-orange-800',
+}
+
+export const INVOICE_STATUSES: Record<string, string> = {
+  BROUILLON: 'Brouillon',
+  ENVOYEE: 'Envoyée',
+  PAYEE: 'Payée',
+  EN_RETARD: 'En retard',
+  ANNULEE: 'Annulée',
+}
+
+export const INVOICE_STATUS_COLORS: Record<string, string> = {
+  BROUILLON: 'bg-gray-100 text-gray-800',
+  ENVOYEE: 'bg-blue-100 text-blue-800',
+  PAYEE: 'bg-green-100 text-green-800',
+  EN_RETARD: 'bg-red-100 text-red-800',
+  ANNULEE: 'bg-orange-100 text-orange-800',
+}
+
 export function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date
   return d.toLocaleDateString('fr-FR', {
