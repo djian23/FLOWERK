@@ -8,10 +8,10 @@ export async function GET(req: NextRequest) {
     const suppliers = await prisma.supplier.findMany({
       where: search ? {
         OR: [
-          { name: { contains: search } },
-          { email: { contains: search } },
-          { phone: { contains: search } },
-          { specialty: { contains: search } },
+          { name: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { phone: { contains: search, mode: 'insensitive' } },
+          { specialty: { contains: search, mode: 'insensitive' } },
         ],
       } : undefined,
       orderBy: { name: 'asc' },

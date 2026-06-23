@@ -73,16 +73,21 @@ export default function ClientDetailPage() {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    const { url } = await uploadRes.json()
-    await fetch(`/api/clients/${id}/photos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    })
-    await fetchClient()
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
+      if (!uploadRes.ok) { alert('Erreur lors de l\'upload'); setUploading(false); return }
+      const { url } = await uploadRes.json()
+      await fetch(`/api/clients/${id}/photos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      })
+      await fetchClient()
+    } catch (err) {
+      alert('Erreur lors de l\'upload de la photo')
+    }
     setUploading(false)
   }
 

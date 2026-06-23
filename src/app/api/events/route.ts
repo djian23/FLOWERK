@@ -14,9 +14,9 @@ export async function GET(req: NextRequest) {
           search
             ? {
                 OR: [
-                  { name: { contains: search } },
-                  { description: { contains: search } },
-                  { address: { contains: search } },
+                  { name: { contains: search, mode: 'insensitive' } },
+                  { description: { contains: search, mode: 'insensitive' } },
+                  { address: { contains: search, mode: 'insensitive' } },
                 ],
               }
             : {},
@@ -76,8 +76,9 @@ export async function POST(req: NextRequest) {
         onSiteContactName: body.onSiteContactName || null,
         onSiteContactPhone: body.onSiteContactPhone || null,
         floorPlanUrl: body.floorPlanUrl || null,
+        venueId: body.venueId || null,
       },
-      include: { client: true },
+      include: { client: true, venue: true },
     })
     return NextResponse.json(event, { status: 201 })
   } catch (error) {

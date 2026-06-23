@@ -12,10 +12,10 @@ export async function GET(req: NextRequest) {
     const items = await prisma.stockItem.findMany({
       where: {
         AND: [
-          search ? { OR: [{ name: { contains: search } }, { description: { contains: search } }] } : {},
+          search ? { OR: [{ name: { contains: search, mode: 'insensitive' } }, { description: { contains: search, mode: 'insensitive' } }] } : {},
           categoryId ? { categoryId } : {},
           condition ? { condition } : {},
-          color ? { color: { contains: color } } : {},
+          color ? { color: { contains: color, mode: 'insensitive' } } : {},
         ],
       },
       orderBy: { name: 'asc' },

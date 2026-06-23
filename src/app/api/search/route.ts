@@ -12,9 +12,9 @@ export async function GET(request: NextRequest) {
     prisma.event.findMany({
       where: {
         OR: [
-          { name: { contains: q } },
-          { description: { contains: q } },
-          { address: { contains: q } },
+          { name: { contains: q, mode: 'insensitive' } },
+          { description: { contains: q, mode: 'insensitive' } },
+          { address: { contains: q, mode: 'insensitive' } },
         ]
       },
       include: { client: { select: { name: true } } },
@@ -23,9 +23,9 @@ export async function GET(request: NextRequest) {
     prisma.client.findMany({
       where: {
         OR: [
-          { name: { contains: q } },
-          { email: { contains: q } },
-          { phone: { contains: q } },
+          { name: { contains: q, mode: 'insensitive' } },
+          { email: { contains: q, mode: 'insensitive' } },
+          { phone: { contains: q, mode: 'insensitive' } },
         ]
       },
       take: 10
@@ -33,9 +33,9 @@ export async function GET(request: NextRequest) {
     prisma.stockItem.findMany({
       where: {
         OR: [
-          { name: { contains: q } },
-          { description: { contains: q } },
-          { color: { contains: q } },
+          { name: { contains: q, mode: 'insensitive' } },
+          { description: { contains: q, mode: 'insensitive' } },
+          { color: { contains: q, mode: 'insensitive' } },
         ]
       },
       include: { category: { select: { name: true } } },

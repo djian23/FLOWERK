@@ -357,11 +357,20 @@ export default function EventDetailPage() {
                     <Label>Client</Label>
                     <select
                       value={editForm.clientId}
-                      onChange={(e) => setEditForm({ ...editForm, clientId: e.target.value })}
+                      onChange={(e) => {
+                        const cId = e.target.value
+                        const c = clients.find((cl: any) => cl.id === cId)
+                        setEditForm({
+                          ...editForm,
+                          clientId: cId,
+                          phone: c?.phone || editForm.phone,
+                          address: c?.address || editForm.address,
+                        })
+                      }}
                       className="mt-1 w-full px-3 py-2 border border-[#E8E0D5] rounded-md text-sm bg-[#FAFAFA]"
                     >
                       <option value="">— Aucun client —</option>
-                      {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      {clients.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
                   <div>

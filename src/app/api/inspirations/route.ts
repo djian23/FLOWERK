@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   const tag = request.nextUrl.searchParams.get('tag')
-  const where = tag ? { tags: { contains: tag } } : {}
+  const where = tag ? { tags: { contains: tag, mode: 'insensitive' as const } } : {}
   const inspirations = await prisma.inspiration.findMany({
     where,
     orderBy: { createdAt: 'desc' },

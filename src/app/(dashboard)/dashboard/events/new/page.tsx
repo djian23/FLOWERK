@@ -22,6 +22,7 @@ export default function NewEventPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<Client[]>([])
+  const [venues, setVenues] = useState<any[]>([])
   const [form, setForm] = useState({
     name: '',
     clientId: '',
@@ -32,11 +33,27 @@ export default function NewEventPage() {
     description: '',
     status: 'DEVIS_EN_COURS',
     type: '',
+    venueId: '',
   })
 
   useEffect(() => {
     fetch('/api/clients').then((r) => r.json()).then(d => setClients(Array.isArray(d) ? d : []))
+    fetch('/api/venues').then((r) => r.json()).then(d => setVenues(Array.isArray(d) ? d : []))
   }, [])
+
+  function handleClientChange(clientId: string) {
+    const client = clients.find(c => c.id === clientId)
+    if (client) {
+      setForm({
+        ...form,
+        clientId,
+        phone: client.phone || form.phone,
+        address: client.address || form.address,
+      })
+    } else {
+      setForm({ ...form, clientId })
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -92,7 +109,7 @@ export default function NewEventPage() {
                 <select
                   id="client"
                   value={form.clientId}
-                  onChange={(e) => setForm({ ...form, clientId: e.target.value })}
+                  onChange={(e) => handleClientChange(e.target.value)}
                   className="mt-1 w-full px-3 py-2 border border-[#E8E0D5] rounded-md text-sm bg-[#FAFAFA] focus:outline-none focus:ring-2 focus:ring-[#C4B8A8]"
                 >
                   <option value="">— Sélectionner un client —</option>
@@ -172,6 +189,21 @@ export default function NewEventPage() {
                   className="mt-1"
                   placeholder="123 rue de la Paix, 75001 Paris"
                 />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="venue">Salle / Lieu</Label>
+                <select
+                  id="venue"
+                  value={form.venueId}
+                  onChange={(e) => setForm({ ...form, venueId: e.target.value })}
+                  className="mt-1 w-full px-3 py-2 border border-[#E8E0D5] rounded-md text-sm bg-[#FAFAFA] focus:outline-none focus:ring-2 focus:ring-[#C4B8A8]"
+                >
+                  <option value="">— Aucune salle —</option>
+                  {venues.map((v: any) => (
+                    <option key={v.id} value={v.id}>{v.name}{v.city ? ` (${v.city})` : ''}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="col-span-2">

@@ -112,19 +112,20 @@ export async function downloadQuotePDF(quote: any): Promise<void> {
 
   autoTable(doc, {
     startY: y,
-    head: [['Prestation', 'Description', 'Quantité', 'Prix unitaire', 'Total']],
+    head: [['Prestation', 'Description', 'Qté', 'P.U. HT', 'Total HT']],
     body: tableBody,
     theme: 'grid',
-    headStyles: { fillColor: [200, 190, 175], textColor: [10, 10, 10], fontStyle: 'bold', fontSize: 9 },
-    bodyStyles: { fontSize: 9 },
+    headStyles: { fillColor: [200, 190, 175], textColor: [10, 10, 10], fontStyle: 'bold', fontSize: 8 },
+    bodyStyles: { fontSize: 8 },
     columnStyles: {
-      0: { cellWidth: 40 },
-      1: { cellWidth: 50 },
-      2: { cellWidth: 20, halign: 'center' },
-      3: { cellWidth: 30, halign: 'right' },
-      4: { cellWidth: 30, halign: 'right' },
+      0: { cellWidth: 45 },
+      1: { cellWidth: 55 },
+      2: { cellWidth: 15, halign: 'center' },
+      3: { cellWidth: 28, halign: 'right' },
+      4: { cellWidth: 28, halign: 'right' },
     },
     margin: { left: 14, right: 14 },
+    tableWidth: 'wrap',
   })
 
   // Grand total
@@ -132,7 +133,7 @@ export async function downloadQuotePDF(quote: any): Promise<void> {
   y = finalY + 8
   doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
-  doc.text(`Total HT : ${formatEUR(quote.totalHT)}`, 196, y, { align: 'right' })
+  doc.text(`Total HT : ${formatEUR(quote.totalHT)}`, 185, y, { align: 'right' })
 
   y += 10
 
@@ -242,7 +243,7 @@ export async function downloadInvoicePDF(invoice: any): Promise<void> {
 
   autoTable(doc, {
     startY: y,
-    head: [['Prestation', 'Description', 'Quantité', 'Prix unitaire (€)', 'Total (€)']],
+    head: [['Prestation', 'Description', 'Qté', 'P.U. HT', 'Total HT']],
     body: tableBody,
     theme: 'grid',
     headStyles: { fillColor: [200, 190, 175], textColor: [10, 10, 10], fontStyle: 'bold', fontSize: 9 },
