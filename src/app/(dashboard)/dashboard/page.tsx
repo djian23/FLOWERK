@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Package, Users, Truck, TrendingUp, Clock } from 'lucide-react'
@@ -40,8 +42,8 @@ export default async function DashboardPage() {
       }),
       prisma.eventCost.findMany({ include: { event: true } }),
     ])
-  } catch {
-    // DB not available yet
+  } catch (error) {
+    console.error('Dashboard data error:', error)
   }
 
   const totalRevenue = financialData.reduce((sum: number, cost: any) => sum + cost.invoicedPrice, 0)
