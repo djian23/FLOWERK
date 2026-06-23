@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatDate, EVENT_STATUSES, EVENT_STATUS_COLORS } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 
 const VENUE_TYPES = [
   'Chateau',
@@ -117,17 +118,16 @@ export default function VenueDetailPage() {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    if (uploadRes.ok) {
-      const { url } = await uploadRes.json()
+    try {
+      const url = await uploadFile(file)
       await fetch(`/api/venues/${id}/photos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       })
       await fetchVenue()
+    } catch (err) {
+      alert('Erreur lors de l\'upload de la photo')
     }
     setUploading(false)
   }

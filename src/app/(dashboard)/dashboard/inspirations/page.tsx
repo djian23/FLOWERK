@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 
 interface Inspiration {
   id: string
@@ -73,17 +74,12 @@ export default function InspirationsPage() {
     try {
       for (let idx = 0; idx < files.length; idx++) {
         const file = files[idx]
-        const formData = new FormData()
-        formData.append('file', file)
-        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData })
-        const uploadData = await uploadRes.json()
-        if (uploadData.url) {
-          await fetch('/api/inspirations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: uploadData.url }),
-          })
-        }
+        const url = await uploadFile(file)
+        await fetch('/api/inspirations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        })
       }
       await fetchInspirations()
     } finally {

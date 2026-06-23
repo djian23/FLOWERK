@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDate, formatCurrency } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 
 export default function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -73,10 +74,7 @@ export default function RecipeDetailPage() {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    const { url } = await uploadRes.json()
+    const url = await uploadFile(file)
     await fetch(`/api/recipes/${id}/photos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

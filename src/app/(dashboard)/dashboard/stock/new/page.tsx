@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StockCategory } from '@/types'
+import { uploadFile } from '@/lib/upload'
 
 export default function NewStockPage() {
   const router = useRouter()
@@ -93,10 +94,7 @@ export default function NewStockPage() {
       const item = await res.json()
       if (res.ok) {
         for (const file of photoFiles) {
-          const fd = new FormData()
-          fd.append('file', file)
-          const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-          const { url } = await uploadRes.json()
+          const url = await uploadFile(file)
           await fetch(`/api/stock/${item.id}/photos`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

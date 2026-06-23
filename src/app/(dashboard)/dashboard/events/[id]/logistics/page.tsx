@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Logistics, Transporter } from '@/types'
 import { ArrowLeft, Upload, Trash2, Check } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 
 export default function LogisticsPage({ params }: { params: { id: string } }) {
   const [logistics, setLogistics] = useState<Logistics | null>(null)
@@ -68,14 +69,11 @@ export default function LogisticsPage({ params }: { params: { id: string } }) {
     const file = e.target.files?.[0]
     if (!file || !logistics) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    const { url, name } = await uploadRes.json()
+    const url = await uploadFile(file)
     await fetch('/api/logistics/' + logistics.id + '/documents', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, name })
+      body: JSON.stringify({ url, name: file.name })
     })
     await load()
     setUploading(false)

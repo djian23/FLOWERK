@@ -27,6 +27,7 @@ import {
   calculateMargin,
 } from '@/lib/utils'
 import { Event, StockItem, Reservation, Transporter, Preview, MediaItem, Document, EventCost } from '@/types'
+import { uploadFile } from '@/lib/upload'
 
 const ALL_STATUSES = Object.entries(EVENT_STATUSES).map(([value, label]) => ({ value, label }))
 
@@ -122,14 +123,15 @@ export default function EventDetailPage() {
   }
 
   async function handleUpload(file: File): Promise<string | null> {
-    const fd = new FormData()
-    fd.append('file', file)
     setUploading(true)
-    const res = await fetch('/api/upload', { method: 'POST', body: fd })
-    setUploading(false)
-    if (!res.ok) return null
-    const { url } = await res.json()
-    return url
+    try {
+      const url = await uploadFile(file)
+      return url
+    } catch {
+      return null
+    } finally {
+      setUploading(false)
+    }
   }
 
   // Reservations

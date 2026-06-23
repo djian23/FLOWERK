@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Preview } from '@/types'
 import { PREVIEW_TYPES, PREVIEW_STATUSES } from '@/lib/utils'
 import { ArrowLeft, Upload, Trash2 } from 'lucide-react'
+import { uploadFile } from '@/lib/upload'
 
 export default function PreviewsPage({ params }: { params: { id: string } }) {
   const [previews, setPreviews] = useState<Preview[]>([])
@@ -27,10 +28,7 @@ export default function PreviewsPage({ params }: { params: { id: string } }) {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    const { url } = await uploadRes.json()
+    const url = await uploadFile(file)
     await fetch('/api/previews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

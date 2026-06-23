@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDate } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 
 interface MoodboardItem {
   id: string
@@ -47,17 +48,17 @@ export default function MoodboardDetailPage() {
     setUploading(true)
 
     for (const file of Array.from(files)) {
-      const fd = new FormData()
-      fd.append('file', file)
-      const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-      if (!uploadRes.ok) continue
-      const { url } = await uploadRes.json()
+      try {
+        const url = await uploadFile(file)
 
-      await fetch(`/api/moodboards/${moodboardId}/items`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, title: file.name.replace(/\.[^.]+$/, '') }),
-      })
+        await fetch(`/api/moodboards/${moodboardId}/items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, title: file.name.replace(/\.[^.]+$/, '') }),
+        })
+      } catch {
+        continue
+      }
     }
 
     setUploading(false)

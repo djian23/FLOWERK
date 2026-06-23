@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { MediaItem } from '@/types'
 import { MEDIA_TYPES } from '@/lib/utils'
 import { ArrowLeft, Upload, Trash2, Film } from 'lucide-react'
+import { uploadFile } from '@/lib/upload'
 
 export default function GalleryPage({ params }: { params: { id: string } }) {
   const [items, setItems] = useState<MediaItem[]>([])
@@ -27,10 +28,7 @@ export default function GalleryPage({ params }: { params: { id: string } }) {
     if (!files) return
     setUploading(true)
     for (const file of Array.from(files)) {
-      const fd = new FormData()
-      fd.append('file', file)
-      const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-      const { url } = await uploadRes.json()
+      const url = await uploadFile(file)
       const isReel = type === 'REEL'
       await fetch('/api/gallery', {
         method: 'POST',

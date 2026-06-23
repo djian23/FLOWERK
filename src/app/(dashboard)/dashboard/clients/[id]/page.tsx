@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDate, formatCurrency, EVENT_STATUSES, EVENT_STATUS_COLORS } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -74,11 +75,7 @@ export default function ClientDetailPage() {
     if (!file) return
     setUploading(true)
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-      if (!uploadRes.ok) { alert('Erreur lors de l\'upload'); setUploading(false); return }
-      const { url } = await uploadRes.json()
+      const url = await uploadFile(file)
       await fetch(`/api/clients/${id}/photos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

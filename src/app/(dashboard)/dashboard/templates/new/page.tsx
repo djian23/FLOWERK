@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { uploadFile } from '@/lib/upload'
 
 export default function NewTemplatePage() {
   const router = useRouter()
@@ -59,10 +60,7 @@ export default function NewTemplatePage() {
       const t = await res.json()
       if (res.ok) {
         for (const file of photoFiles) {
-          const fd = new FormData()
-          fd.append('file', file)
-          const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-          const { url } = await uploadRes.json()
+          const url = await uploadFile(file)
           await fetch(`/api/templates/${t.id}/photos`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

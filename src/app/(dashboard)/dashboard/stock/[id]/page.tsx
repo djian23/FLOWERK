@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { StockItem, StockCategory } from '@/types'
 import { STOCK_CONDITIONS, formatCurrency, formatDate } from '@/lib/utils'
+import { uploadFile } from '@/lib/upload'
 import { ArrowLeft, Upload, Trash2, Edit2, Check, X } from 'lucide-react'
 
 export default function StockDetailPage({ params }: { params: { id: string } }) {
@@ -86,16 +87,17 @@ export default function StockDetailPage({ params }: { params: { id: string } }) 
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    const { url } = await uploadRes.json()
-    await fetch('/api/stock/' + params.id + '/photos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    })
-    await load()
+    try {
+      const url = await uploadFile(file)
+      await fetch('/api/stock/' + params.id + '/photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      })
+      await load()
+    } catch (err) {
+      alert('Erreur lors de l\'upload de la photo')
+    }
     setUploading(false)
   }
 

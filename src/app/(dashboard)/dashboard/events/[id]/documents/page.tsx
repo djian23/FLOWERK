@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Document } from '@/types'
 import { DOCUMENT_TYPES, formatDate } from '@/lib/utils'
 import { ArrowLeft, Upload, Trash2, FileText, ExternalLink } from 'lucide-react'
+import { uploadFile } from '@/lib/upload'
 
 export default function DocumentsPage({ params }: { params: { id: string } }) {
   const [documents, setDocuments] = useState<Document[]>([])
@@ -26,10 +27,7 @@ export default function DocumentsPage({ params }: { params: { id: string } }) {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd })
-    const { url } = await uploadRes.json()
+    const url = await uploadFile(file)
     await fetch('/api/documents', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
