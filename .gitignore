@@ -38,6 +38,8 @@ next-env.d.ts
 /public/uploads/*
 !/public/uploads/.gitkeep
 
-# prisma
+# prisma (local sqlite)
+/prisma/dev.db
 /prisma/dev.db-journal
-/prisma/prisma/dev.db-journal
+/prisma/prisma/
+.env
