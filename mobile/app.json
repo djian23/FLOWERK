@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "FLOWERK",
+    "slug": "flowerk-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "flowerk",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FAFAFA"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FAFAFA"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
